@@ -10,22 +10,20 @@
 
 #include "graphics.h"
 #include "panel-configuration.h"
-#include "canvas-wrapper.h"
+#include "matrix-type.h"
 
 using namespace rgb_matrix;
 using namespace std;
 
 static struct Options {
-    bool   use_virtual_canvas = false;
     string panel_configuration_file;
 } gOptions;
 
-/// Returns pointer to global canvas object. Instantiates a virtual Canvas
-/// if gOptions.use_virtual_canvas is true.
-static CanvasWrapper *shared_canvas();
+/// Shared matrix to be used throughout the process
+static Matrix *shared_matrix();
 
 /// Starts running the shared canvas, if applicable. This blocks the calling thread.
-static void run_shared_canvas();
+static void run_shared_matrix();
 
 #pragma mark Commands
 
@@ -46,10 +44,10 @@ static int run_demo(char * const argv[])
 
 static int run_test(char * const argv[])
 {
-    CanvasWrapper *canvas = shared_canvas();
+    Matrix *canvas = shared_matrix();
     DrawCircle(canvas, 5, 5, 5, Color(0xFF, 0x00, 0x00));
 
-    run_shared_canvas();
+    run_shared_matrix();
     return 0;
 }
 
@@ -58,7 +56,7 @@ static int run_image_test(char * const argv[])
     Magick::Image image;
     image.read("xion_logo_still.png");
 
-    CanvasWrapper *sharedCanvas = shared_canvas();
+    Canvas *sharedCanvas = shared_matrix();
 
     for (size_t y = 0; y < image.rows(); ++y) {
         for (size_t x = 0; x < image.columns(); ++x) {
@@ -71,7 +69,7 @@ static int run_image_test(char * const argv[])
         }
     }
 
-    run_shared_canvas();
+    run_shared_matrix();
 
     return 0;
 }
@@ -100,37 +98,36 @@ static void setup_sighandler()
     sigaction(SIGINT, &handler, NULL);
 }
 
-static CanvasWrapper *shared_canvas()
+static Matrix *shared_matrix()
 {
-    static CanvasWrapper *wrapper = NULL;
-    if (!wrapper) {
+    static Matrix *matrix = NULL;
+    if (!matrix) {
         PanelConfiguration panelConfig;
         if (gOptions.panel_configuration_file.length()) {
             panelConfig.readConfigurationFile(gOptions.panel_configuration_file);
         }
 
-        if (gOptions.use_virtual_canvas) {
-            shared_ptr<VirtualCanvas> c = make_shared<VirtualCanvas>(panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
-            wrapper = new CanvasWrapperSpec<VirtualCanvas>(c);
-        } else {
-            GPIO *io = new GPIO();
-            if (!io->Init()) {
-                cerr << "Unable to initialize GPIO. Permissions?" << endl;
-                return nullptr;
-            }
-
-            shared_ptr<RGBMatrix> c = make_shared<RGBMatrix>(io, panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
-            wrapper = new CanvasWrapperSpec<RGBMatrix>(c);
+#ifdef USE_VIRTUAL_CANVAS
+        matrix = new VirtualCanvas(panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
+#else
+        GPIO *io = new GPIO();
+        if (!io->Init()) {
+            cerr << "Unable to initialize GPIO. Permissions?" << endl;
+            return nullptr;
         }
+        matrix = new RGBMatrix(io, panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
+#endif
     }
 
-    return wrapper;
+    return matrix;
 }
 
-static void run_shared_canvas()
+static void run_shared_matrix()
 {
-    CanvasWrapper *canvas = shared_canvas();
-    canvas->Start();
+#ifdef USE_VIRTUAL_CANVAS
+    VirtualCanvas *matrix = shared_matrix();
+    matrix->StartSimulation();
+#endif
 }
 
 static int print_usage(char *program_name)
@@ -138,7 +135,6 @@ static int print_usage(char *program_name)
     fprintf(stderr, "usage: %s <options> <command>\n", program_name);
     fprintf(stderr, "Options:\n"
                 "\t -c <file>   : Define panel configuration file (omit to use default), \n"
-                "\t -v          : Use a virtual led panel (requires X11), \n"
     );
     fprintf(stderr, "Commands:\n"
                 "\t demo <demo options>  : Run rpi-led-matrix demo program, \n"
@@ -179,11 +175,8 @@ int main(int argc, char * const argv[])
 
     int option;
     bool done = false;
-    while ( !done && ((option = getopt(argc, argv, "vc:h")) != -1) ) {
+    while ( !done && ((option = getopt(argc, argv, "c:h")) != -1) ) {
         switch (option) {
-            case 'v':
-                gOptions.use_virtual_canvas = true;
-                break;
             case 'c':
                 gOptions.panel_configuration_file = string(optarg);
                 break;

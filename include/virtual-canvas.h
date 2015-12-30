@@ -22,7 +22,6 @@ public:
     virtual void Clear();
     virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
 
-    // Shared methods between VirtualCanvas and RGBMatrix
     VirtualFrameCanvas *CreateFrameCanvas();
     VirtualFrameCanvas *SwapOnVSync(VirtualFrameCanvas *other);
 
@@ -48,6 +47,7 @@ private:
     uint32_t *ValueAt(int x, int y);
 };
 
+/// This class is used for double-buffering
 class VirtualFrameCanvas : public rgb_matrix::Canvas {
 public:
     VirtualFrameCanvas(int width, int height);

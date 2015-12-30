@@ -1,3 +1,6 @@
+# Enable this to use the virtual LED sign
+DEFINES+=-D USE_VIRTUAL_CANVAS
+
 CC := clang++
 SRCDIR := src
 BUILDDIR := build
@@ -14,7 +17,7 @@ LDFLAGS+=-L$(RPI_RGB_LIBDIR) -l$(RPI_RGB_LIBRARY_NAME) -lrt -lm -lpthread
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 -g # -Wall
+CFLAGS := -std=c++11 -g $(DEFINES) # -Wall
 LIB := -lm -lstdc++ -lpthread -lSDL2
 INC := -I include -I$(RPI_RGB_INCDIR)
 
