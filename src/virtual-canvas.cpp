@@ -29,6 +29,16 @@ VirtualCanvas::~VirtualCanvas()
     SDL_Quit();
 }
 
+rgb_matrix::FrameCanvas *VirtualCanvas::CreateFrameCanvas()
+{
+    return nullptr;
+}
+
+rgb_matrix::FrameCanvas *VirtualCanvas::SwapOnVSync(rgb_matrix::FrameCanvas *other)
+{
+    return nullptr;
+}
+
 bool VirtualCanvas::runningSimulation()
 {
     std::lock_guard<std::mutex> guard(_runningSimulationMutex);

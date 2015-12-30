@@ -1,5 +1,4 @@
-# CC := clang
-CC := g++
+CC := clang++
 SRCDIR := src
 BUILDDIR := build
 TARGET := bin/ledsign

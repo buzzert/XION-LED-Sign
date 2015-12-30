@@ -5,7 +5,7 @@
 #include <thread>
 #include <mutex>
 
-#include "canvas.h"
+#include "led-matrix.h"
 
 class VirtualCanvas : public rgb_matrix::Canvas
 {
@@ -19,6 +19,10 @@ public:
     virtual void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
     virtual void Clear();
     virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
+
+    // Shared methods between VirtualCanvas and RGBMatrix
+    rgb_matrix::FrameCanvas *CreateFrameCanvas();
+    rgb_matrix::FrameCanvas *SwapOnVSync(rgb_matrix::FrameCanvas *other);
 
     int simulatedWidth() const;
     int simulatedHeight() const;

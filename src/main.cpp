@@ -6,10 +6,9 @@
 #include <getopt.h>
 #include <iostream>
 
-#include "virtual-canvas.h"
 #include "graphics.h"
 #include "panel-configuration.h"
-#include "led-matrix.h"
+#include "canvas-wrapper.h"
 
 using namespace rgb_matrix;
 using namespace std;
@@ -21,7 +20,7 @@ static struct Options {
 
 /// Returns pointer to global canvas object. Instantiates a virtual Canvas
 /// if gOptions.use_virtual_canvas is true.
-static Canvas *shared_canvas();
+static CanvasWrapper *shared_canvas();
 
 /// Starts running the shared canvas, if applicable. This blocks the calling thread.
 static void run_shared_canvas();
@@ -45,10 +44,11 @@ static int run_demo(char * const argv[])
 
 static int run_test(char * const argv[])
 {
-    Canvas *canvas = shared_canvas();
+    CanvasWrapper *canvas = shared_canvas();
     DrawCircle(canvas, 5, 5, 5, Color(0xFF, 0x00, 0x00));
 
     run_shared_canvas();
+    return 0;
 }
 
 static Command commands[] = {
@@ -74,38 +74,37 @@ static void setup_sighandler()
     sigaction(SIGINT, &handler, NULL);
 }
 
-static Canvas *shared_canvas()
+static CanvasWrapper *shared_canvas()
 {
-    static Canvas *c = NULL;
-    if (!c) {
+    static CanvasWrapper *wrapper = NULL;
+    if (!wrapper) {
         PanelConfiguration panelConfig;
         if (gOptions.panel_configuration_file.length()) {
             panelConfig.readConfigurationFile(gOptions.panel_configuration_file);
         }
 
         if (gOptions.use_virtual_canvas) {
-            c = new VirtualCanvas(panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
+            shared_ptr<VirtualCanvas> c = make_shared<VirtualCanvas>(panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
+            wrapper = new CanvasWrapperSpec<VirtualCanvas>(c);
         } else {
             GPIO *io = new GPIO();
             if (!io->Init()) {
                 cerr << "Unable to initialize GPIO. Permissions?" << endl;
-                return NULL;
+                return nullptr;
             }
 
-            c = new RGBMatrix(io, panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
+            shared_ptr<RGBMatrix> c = make_shared<RGBMatrix>(io, panelConfig.rows, panelConfig.chainedDisplays, panelConfig.parallelDisplays);
+            wrapper = new CanvasWrapperSpec<RGBMatrix>(c);
         }
     }
 
-    return c;
+    return wrapper;
 }
 
 static void run_shared_canvas()
 {
-    Canvas *canvas = shared_canvas();
-    if (gOptions.use_virtual_canvas) {
-        VirtualCanvas *virtualCanvas = (VirtualCanvas *)canvas;
-        virtualCanvas->StartSimulation();
-    }
+    CanvasWrapper *canvas = shared_canvas();
+    canvas->Start();
 }
 
 static int print_usage(char *program_name)
