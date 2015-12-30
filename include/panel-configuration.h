@@ -3,7 +3,7 @@
 class PanelConfiguration
 {
 public:
-    PanelConfiguration(int rows = 32, int chainedDisplays = 2, int parallelDisplays = 1);
+    PanelConfiguration(int rows = 16, int chainedDisplays = 2, int parallelDisplays = 1);
 
     void readConfigurationFile(const std::string &configurationFilename);
 

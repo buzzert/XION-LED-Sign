@@ -18,13 +18,17 @@ CFLAGS := -std=c++11 -g # -Wall
 LIB := -lm -lstdc++ -lpthread -lSDL2
 INC := -I include -I$(RPI_RGB_INCDIR)
 
+# ImageMagick
+MAGICK_CXXFLAGS=`GraphicsMagick++-config --cppflags --cxxflags`
+MAGICK_LDFLAGS=`GraphicsMagick++-config --ldflags --libs`
+
 $(TARGET): $(OBJECTS) $(RPI_RGB_LIBRARY)
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB) $(MAGICK_LDFLAGS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) $(MAGICK_CXXFLAGS) -c -o $@ $<
 
 $(RPI_RGB_LIBRARY): FORCE
 	$(MAKE) -C $(RPI_RGB_LIBDIR)

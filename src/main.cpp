@@ -6,6 +6,8 @@
 #include <getopt.h>
 #include <iostream>
 
+#include <Magick++.h>
+
 #include "graphics.h"
 #include "panel-configuration.h"
 #include "canvas-wrapper.h"
@@ -51,9 +53,33 @@ static int run_test(char * const argv[])
     return 0;
 }
 
+static int run_image_test(char * const argv[])
+{
+    Magick::Image image;
+    image.read("xion_logo_still.png");
+
+    CanvasWrapper *sharedCanvas = shared_canvas();
+
+    for (size_t y = 0; y < image.rows(); ++y) {
+        for (size_t x = 0; x < image.columns(); ++x) {
+            const Magick::Color &c = image.pixelColor(x, y);
+            sharedCanvas->SetPixel(x, y,
+                           ScaleQuantumToChar(c.redQuantum()),
+                           ScaleQuantumToChar(c.greenQuantum()),
+                           ScaleQuantumToChar(c.blueQuantum())
+           );
+        }
+    }
+
+    run_shared_canvas();
+
+    return 0;
+}
+
 static Command commands[] = {
     Command("demo", run_demo),
     Command("test", run_test),
+    Command("image", run_image_test),
 };
 
 #pragma mark -
@@ -117,6 +143,7 @@ static int print_usage(char *program_name)
     fprintf(stderr, "Commands:\n"
                 "\t demo <demo options>  : Run rpi-led-matrix demo program, \n"
                 "\t test                 : Run a simple test (shows red circle), \n"
+                "\t image                : Show the XION image test, \n"
     );
 
     return 1;
@@ -145,6 +172,7 @@ static int execute_command(const string &command_name, char * const argv[])
 int main(int argc, char * const argv[])
 {
     setup_sighandler();
+    Magick::InitializeMagick(*argv);
 
     string command_name;
     char * const program_name = basename(argv[0]);

@@ -17,7 +17,7 @@ VirtualCanvas::VirtualCanvas(int rows, int chainedDisplays, int parallelDisplays
         std::cout << "SDL Error: " << SDL_GetError() << "\n";
     }
 
-    _framebuffer = (uint32_t *)malloc(sizeof(uint32_t) * height() * width());
+    _currentFrame = CreateFrameCanvas();
 }
 
 VirtualCanvas::~VirtualCanvas()
@@ -29,13 +29,15 @@ VirtualCanvas::~VirtualCanvas()
     SDL_Quit();
 }
 
-rgb_matrix::FrameCanvas *VirtualCanvas::CreateFrameCanvas()
+VirtualFrameCanvas *VirtualCanvas::CreateFrameCanvas()
 {
-    return nullptr;
+    return new VirtualFrameCanvas(width(), height());
 }
 
-rgb_matrix::FrameCanvas *VirtualCanvas::SwapOnVSync(rgb_matrix::FrameCanvas *other)
+VirtualFrameCanvas *VirtualCanvas::SwapOnVSync(VirtualFrameCanvas *other)
 {
+    // todo: VirtualCanvas doesn't have a framebuffer anymore, instead it has a
+    // "current frameCanvas" ivar. This method swaps that and locks
     return nullptr;
 }
 
@@ -115,25 +117,58 @@ int VirtualCanvas::height() const
 
 uint32_t *VirtualCanvas::ValueAt(int x, int y)
 {
-    return &_framebuffer[ (y * width()) + x ];
+    return _currentFrame->ValueAt(x, y);
 }
 
 void VirtualCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue)
 {
-	uint32_t colorVal = blue;
-	colorVal |= (green << 8);
-	colorVal |= (red << 16);
-
-    uint32_t *val = ValueAt(x, y);
-	(*val) = colorVal;
+    _currentFrame->SetPixel(x, y, red, green, blue);
 }
 
 void VirtualCanvas::Clear()
 {
-    memset(_framebuffer, 0, height() * width());
+    _currentFrame->Clear();
 }
 
 void VirtualCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
 {
+    _currentFrame->Fill(red, green, blue);
+}
 
+#pragma mark - VirtualFrameCanvas
+
+VirtualFrameCanvas::VirtualFrameCanvas(int width, int height)
+    : _width(width), _height(height)
+{
+    _framebuffer = (uint32_t *)malloc(sizeof(uint32_t) * height * width);
+}
+
+VirtualFrameCanvas::~VirtualFrameCanvas()
+{
+    delete _framebuffer;
+}
+
+void VirtualFrameCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue)
+{
+    uint32_t colorVal = blue;
+    colorVal |= (green << 8);
+    colorVal |= (red << 16);
+
+    uint32_t *val = ValueAt(x, y);
+    (*val) = colorVal;
+}
+
+void VirtualFrameCanvas::Clear()
+{
+    memset(_framebuffer, 0, height() * width());
+}
+
+void VirtualFrameCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
+{
+
+}
+
+uint32_t *VirtualFrameCanvas::ValueAt(int x, int y)
+{
+    return &_framebuffer[ (y * width()) + x ];
 }

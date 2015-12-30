@@ -6,7 +6,6 @@
 
  #include <memory>
  #include "canvas.h"
- #include "led-matrix.h"
  #include "virtual-canvas.h"
 
 using namespace rgb_matrix;
@@ -27,8 +26,10 @@ public:
     virtual void Fill(uint8_t red, uint8_t green, uint8_t blue) { canvas()->Fill(red, green, blue); };
 
     // Common existing Canvas methods
+    /*
     virtual FrameCanvas *CreateFrameCanvas() { return nullptr; };
     virtual FrameCanvas *SwapOnVSync(FrameCanvas *other) { return nullptr; };
+    */
 
     // Common new Canvas methods
     virtual void Start() {};
@@ -42,8 +43,10 @@ public:
 
     // overrides
     std::shared_ptr<Canvas> canvas() const override { return _canvas; }
+    /*
     FrameCanvas *CreateFrameCanvas() override { return _canvas->CreateFrameCanvas(); };
     FrameCanvas *SwapOnVSync(FrameCanvas *other) override { return _canvas->SwapOnVSync(other); };
+    */ 
 
     void Start() override;
 
