@@ -1045,7 +1045,7 @@ static int usage(const char *progname) {
   return 1;
 }
 
-int main(int argc, char *argv[]) {
+int demo_main(int argc, char *argv[]) {
   GPIO io;
   bool as_daemon = false;
   int runtime_seconds = -1;

@@ -7,7 +7,8 @@
 
 #include "canvas.h"
 
-class VirtualCanvas : public rgb_matrix::Canvas {
+class VirtualCanvas : public rgb_matrix::Canvas
+{
 public:
     VirtualCanvas(int rows = 32, int chainedDisplays = 1, int parallelDisplays = 1);
     ~VirtualCanvas();
