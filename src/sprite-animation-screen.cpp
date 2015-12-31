@@ -6,15 +6,6 @@
 
 using namespace rgb_matrix;
 
-class SpriteAnimationScreen::SpriteAnimationFrame
-{
-public:
-    SpriteAnimationFrame(MatrixFrame *frame, int delay) : frame(frame), delay(delay) {};
-
-    int          delay;
-    MatrixFrame *frame;
-};
-
 SpriteAnimationScreen::SpriteAnimationScreen(Matrix *m, std::string animationFilePath)
     : TickerScreen(m)
 {

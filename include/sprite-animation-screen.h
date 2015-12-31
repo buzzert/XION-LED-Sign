@@ -12,8 +12,14 @@ public:
     void Run() override;
 
 private:
-    class SpriteAnimationFrame;
-    
+    class SpriteAnimationFrame
+    {
+    public:
+        SpriteAnimationFrame(MatrixFrame *frame, int delay) : frame(frame), delay(delay) {};
+        int          delay;
+        MatrixFrame *frame;
+    };
+
     std::vector<Magick::Image> _rawImages;
     std::vector<SpriteAnimationFrame> _frames;
 };

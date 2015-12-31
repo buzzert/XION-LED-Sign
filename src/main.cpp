@@ -14,6 +14,8 @@
 #include "matrix-type.h"
 
 #include "sprite-animation-screen.h"
+#include "screen-coordinator.h"
+#include "interstitial-screens.h"
 
 using namespace rgb_matrix;
 using namespace std;
@@ -80,9 +82,21 @@ static int run_image_test(char * const argv[])
 static int run_sequence(char * const argv[])
 {
     Matrix *m = shared_matrix();
-    SpriteAnimationScreen spriteAnim(m, "xion_logo_still.gif");
 
-    spriteAnim.Start();
+    vector<TickerScreen *> screens;
+
+    SpriteAnimationScreen xionLogo(m, "xion_logo_still.gif");
+    screens.push_back(&xionLogo);
+
+    SpriteAnimationScreen nyanCat(m, "nyan_cat.gif");
+    screens.push_back(&nyanCat);
+
+    InterstitialScreen::RainbowRoad rainbowRoad(m);
+    screens.push_back(&rainbowRoad);
+
+    ScreenCoordinator coordinator(screens);
+    coordinator.Start();
+
     run_shared_matrix();
 
     return 0;
