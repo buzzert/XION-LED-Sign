@@ -79,6 +79,30 @@ static int run_image_test(char * const argv[])
     return 0;
 }
 
+static int run_text_test(char * const argv[])
+{
+    Matrix *matrix = shared_matrix();
+
+    Font font;
+    if (!font.LoadFont("../lib/rpi-rgb-led-matrix/fonts/4x6.bdf")) {
+        cerr << "Error loading font" << endl;
+        return 1;
+    }
+
+    Color white(255, 255, 255);
+    rgb_matrix::DrawText(matrix, font, 0, 0 + font.baseline(), white, "Upcoming events:");
+
+    Font bigFont;
+    bigFont.LoadFont("../lib/rpi-rgb-led-matrix/fonts/6x10.bdf");
+
+    Color red(255, 0, 0);
+    rgb_matrix::DrawText(matrix, bigFont, 0, font.baseline() + bigFont.baseline() + 1, red, "YOUR MOM");
+
+    run_shared_matrix();
+
+    return 0;
+}
+
 static int run_sequence(char * const argv[])
 {
     Matrix *m = shared_matrix();
@@ -107,6 +131,7 @@ static Command commands[] = {
     Command("test", run_test),
     Command("image", run_image_test),
     Command("run", run_sequence),
+    Command("text", run_text_test),
 };
 
 #pragma mark -
@@ -170,6 +195,7 @@ static int print_usage(char *program_name)
                 "\t test                 : Run a simple test (shows red circle), \n"
                 "\t image                : Show the XION image test, \n"
                 "\t run                  : Start running programmed sequence, \n"
+                "\t text                 : Show some test text, \n"
     );
 
     return 1;
