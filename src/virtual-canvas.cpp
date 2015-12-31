@@ -1,6 +1,7 @@
 #include "virtual-canvas.h"
 
 #include <iostream>
+#include <unistd.h>
 
 #define LED_SIZE 6
 #define LED_MARGIN 6
@@ -36,9 +37,8 @@ VirtualFrameCanvas *VirtualCanvas::CreateFrameCanvas()
 
 VirtualFrameCanvas *VirtualCanvas::SwapOnVSync(VirtualFrameCanvas *other)
 {
-    // todo: VirtualCanvas doesn't have a framebuffer anymore, instead it has a
-    // "current frameCanvas" ivar. This method swaps that and locks
-    return nullptr;
+    _currentFrame = other;
+    return other;
 }
 
 bool VirtualCanvas::runningSimulation()
@@ -92,6 +92,7 @@ void VirtualCanvas::StartSimulation()
         }
 
         SDL_RenderPresent( _renderer );
+        usleep((1000000 / 60));
     }
 }
 

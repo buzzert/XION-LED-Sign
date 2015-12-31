@@ -1,3 +1,6 @@
+#ifndef VIRTUAL_CANVAS_H
+#define VIRTUAL_CANVAS_H
+
 #include <stdint.h>
 #include <vector>
 #include "SDL2/SDL.h"
@@ -69,3 +72,5 @@ private:
     uint32_t *ValueAt(int x, int y);
     uint32_t *_framebuffer;
 };
+
+#endif

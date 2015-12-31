@@ -5,12 +5,15 @@
 #include <pthread.h>
 #include <getopt.h>
 #include <iostream>
+#include <libgen.h>
 
 #include <Magick++.h>
 
 #include "graphics.h"
 #include "panel-configuration.h"
 #include "matrix-type.h"
+
+#include "sprite-animation-screen.h"
 
 using namespace rgb_matrix;
 using namespace std;
@@ -54,7 +57,7 @@ static int run_test(char * const argv[])
 static int run_image_test(char * const argv[])
 {
     Magick::Image image;
-    image.read("xion_logo_still.png");
+    image.read("xion_logo_still.gif");
 
     Canvas *sharedCanvas = shared_matrix();
 
@@ -74,10 +77,22 @@ static int run_image_test(char * const argv[])
     return 0;
 }
 
+static int run_sequence(char * const argv[])
+{
+    Matrix *m = shared_matrix();
+    SpriteAnimationScreen spriteAnim(m, "xion_logo_still.gif");
+
+    spriteAnim.Start();
+    run_shared_matrix();
+
+    return 0;
+}
+
 static Command commands[] = {
     Command("demo", run_demo),
     Command("test", run_test),
     Command("image", run_image_test),
+    Command("run", run_sequence),
 };
 
 #pragma mark -
@@ -140,6 +155,7 @@ static int print_usage(char *program_name)
                 "\t demo <demo options>  : Run rpi-led-matrix demo program, \n"
                 "\t test                 : Run a simple test (shows red circle), \n"
                 "\t image                : Show the XION image test, \n"
+                "\t run                  : Start running programmed sequence, \n"
     );
 
     return 1;
