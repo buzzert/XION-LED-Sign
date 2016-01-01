@@ -1,10 +1,19 @@
+# Debugging
+DEBUG=1
+
 # Enable this to use the virtual LED sign
 DEFINES+=-D USE_VIRTUAL_CANVAS
 
 CC := clang++
 SRCDIR := src
 BUILDDIR := build
+RESOURCEDIR := resources
+
 TARGET := bin/ledsign
+TARGET_RESOURCES := bin/resources
+
+RESOURCES_DIR := $(realpath $(TARGET_RESOURCES))
+DEFINES+=-D RESOURCES_DIR=\"$(RESOURCES_DIR)/\"
 
 # RPI RGB Library
 RPI_RGB_DIR=lib/rpi-rgb-led-matrix
@@ -25,9 +34,9 @@ INC := -I include -I$(RPI_RGB_INCDIR)
 MAGICK_CXXFLAGS=`GraphicsMagick++-config --cppflags --cxxflags`
 MAGICK_LDFLAGS=`GraphicsMagick++-config --ldflags --libs`
 
-$(TARGET): $(OBJECTS) $(RPI_RGB_LIBRARY)
+$(TARGET): $(OBJECTS) $(RPI_RGB_LIBRARY) $(TARGET_RESOURCES)
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB) $(MAGICK_LDFLAGS)
+	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $(OBJECTS) $(RPI_RGB_LIBRARY) -o $(TARGET) $(LIB) $(MAGICK_LDFLAGS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
@@ -35,6 +44,15 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 $(RPI_RGB_LIBRARY): FORCE
 	$(MAKE) -C $(RPI_RGB_LIBDIR)
+
+$(TARGET_RESOURCES): FORCE
+	@echo " Copying resources..."
+	@mkdir -p $(TARGET_RESOURCES)
+	@cp -f $(RESOURCEDIR)/* $(TARGET_RESOURCES) 2> /dev/null || :
+	@echo " Copying fonts..."
+	@mkdir -p $(TARGET_RESOURCES)/fonts
+	@cp -f $(RPI_RGB_DIR)/fonts/* $(TARGET_RESOURCES)/fonts
+
 
 clean:
 	@echo " Cleaning...";

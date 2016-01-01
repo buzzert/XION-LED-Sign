@@ -6,6 +6,8 @@
 #define LED_SIZE 6
 #define LED_MARGIN 6
 
+using namespace std;
+
 VirtualCanvas::VirtualCanvas(int rows, int chainedDisplays, int parallelDisplays)
     : _rows(rows), _chainedDisplays(chainedDisplays), _parallelDisplays(parallelDisplays), _runningSimulation(true)
 {
@@ -37,8 +39,11 @@ VirtualFrameCanvas *VirtualCanvas::CreateFrameCanvas()
 
 VirtualFrameCanvas *VirtualCanvas::SwapOnVSync(VirtualFrameCanvas *other)
 {
+    lock_guard<mutex> guard(_currentFrameMutex);
+    VirtualFrameCanvas *previous = _currentFrame;
     _currentFrame = other;
-    return other;
+
+    return previous;
 }
 
 bool VirtualCanvas::runningSimulation()
@@ -55,6 +60,7 @@ void VirtualCanvas::StopSimulation()
 
 void VirtualCanvas::StartSimulation()
 {
+    using namespace Utils;
     while ( runningSimulation() ) {
         SDL_Event e;
         while ( SDL_PollEvent( &e ) != 0 ) {
@@ -74,25 +80,25 @@ void VirtualCanvas::StartSimulation()
         rectangle.y = LED_MARGIN;
         rectangle.w = rectangle.h = LED_SIZE;
 
-        for (unsigned int y = 0; y < height(); y++) {
-            for (unsigned int x = 0; x < width(); x++) {
-                uint32_t colorVal = *(ValueAt(x, y));
+        {
+            lock_guard<mutex> guard(_currentFrameMutex);
+            
+            for (unsigned int y = 0; y < height(); y++) {
+                for (unsigned int x = 0; x < width(); x++) {
+                    Pixel colorVal = *(ValueAt(x, y));
 
-                uint8_t red = (colorVal >> 16) & 0xFF;
-                uint8_t green = (colorVal >> 8) & 0xFF;
-                uint8_t blue = colorVal & 0xFF;
+                    SDL_SetRenderDrawColor(_renderer, colorVal.red, colorVal.green, colorVal.blue, 0xFF);
+                    SDL_RenderFillRect(_renderer, &rectangle);
+                    rectangle.x += LED_SIZE + LED_MARGIN;
+                }
 
-                SDL_SetRenderDrawColor(_renderer, red, green, blue, 0xFF);
-                SDL_RenderFillRect(_renderer, &rectangle);
-                rectangle.x += LED_SIZE + LED_MARGIN;
+                rectangle.y += LED_SIZE + LED_MARGIN;
+                rectangle.x = LED_MARGIN;
             }
 
-            rectangle.y += LED_SIZE + LED_MARGIN;
-            rectangle.x = LED_MARGIN;
+            SDL_RenderPresent( _renderer );
+            usleep((1000000 / 60));
         }
-
-        SDL_RenderPresent( _renderer );
-        usleep((1000000 / 60));
     }
 }
 
@@ -116,7 +122,7 @@ int VirtualCanvas::height() const
     return _rows;
 }
 
-uint32_t *VirtualCanvas::ValueAt(int x, int y)
+Utils::Pixel *VirtualCanvas::ValueAt(int x, int y) const
 {
     return _currentFrame->ValueAt(x, y);
 }
@@ -141,7 +147,7 @@ void VirtualCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
 VirtualFrameCanvas::VirtualFrameCanvas(int width, int height)
     : _width(width), _height(height)
 {
-    _framebuffer = (uint32_t *)malloc(sizeof(uint32_t) * height * width);
+    _framebuffer = (Utils::Pixel *)malloc(sizeof(Utils::Pixel) * height * width);
 }
 
 VirtualFrameCanvas::~VirtualFrameCanvas()
@@ -151,17 +157,15 @@ VirtualFrameCanvas::~VirtualFrameCanvas()
 
 void VirtualFrameCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue)
 {
-    uint32_t colorVal = blue;
-    colorVal |= (green << 8);
-    colorVal |= (red << 16);
+    Utils::Pixel pixel(red, green, blue);
 
-    uint32_t *val = ValueAt(x, y);
-    (*val) = colorVal;
+    Utils::Pixel *val = ValueAt(x, y);
+    (*val) = pixel;
 }
 
 void VirtualFrameCanvas::Clear()
 {
-    memset(_framebuffer, 0, height() * width());
+    memset(_framebuffer, 0, sizeof(Utils::Pixel) * (height() * width()));
 }
 
 void VirtualFrameCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
@@ -169,7 +173,7 @@ void VirtualFrameCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
 
 }
 
-uint32_t *VirtualFrameCanvas::ValueAt(int x, int y)
+Utils::Pixel *VirtualFrameCanvas::ValueAt(int x, int y) const
 {
     return &_framebuffer[ (y * width()) + x ];
 }

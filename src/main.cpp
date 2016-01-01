@@ -16,6 +16,8 @@
 #include "sprite-animation-screen.h"
 #include "screen-coordinator.h"
 #include "interstitial-screens.h"
+#include "text-screen.h"
+#include "clock-screen.h"
 
 using namespace rgb_matrix;
 using namespace std;
@@ -109,14 +111,34 @@ static int run_sequence(char * const argv[])
 
     vector<TickerScreen *> screens;
 
-    SpriteAnimationScreen xionLogo(m, "xion_logo_still.gif");
+    SpriteAnimationScreen xionLogo(m, "xion_logo_anim.gif");
     screens.push_back(&xionLogo);
+
+    TextScreen wifiPassword(m, TextScreen::LabelStyle::Subtitle);
+    wifiPassword.scrollingStyle = TextScreen::ScrollingStyle::ScrollIn;
+    wifiPassword.SetTitleLabel("w0ww0wvenus");
+    wifiPassword.titleColor = Color(0xFF, 0x00, 0x00);
+    wifiPassword.SetSubtitleLabel("WiFi Password:");
+    wifiPassword.subtitleColor = Color(0xFF, 0xFF, 0x00);
+    wifiPassword.setDuration(-1);
+    screens.push_back(&wifiPassword);
 
     SpriteAnimationScreen nyanCat(m, "nyan_cat.gif");
     screens.push_back(&nyanCat);
 
+    TextScreen messageScreen(m, TextScreen::LabelStyle::Default);
+    messageScreen.scrollingStyle = TextScreen::ScrollingStyle::ScrollIn;
+    messageScreen.titleColor = Color(0x00, 0xFF, 0x00);
+    messageScreen.SetTitleLabel("Why do you need Konami original songs?");
+    messageScreen.setDuration(-1);
+    screens.push_back(&messageScreen);
+
     InterstitialScreen::RainbowRoad rainbowRoad(m);
     screens.push_back(&rainbowRoad);
+
+    ClockScreen clockScreen(m);
+    clockScreen.setDuration(8);
+    screens.push_back(&clockScreen);
 
     ScreenCoordinator coordinator(screens);
     coordinator.Start();

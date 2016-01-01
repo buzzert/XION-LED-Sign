@@ -9,6 +9,7 @@
 #include <mutex>
 
 #include "led-matrix.h"
+#include "utils.h"
 
 class VirtualFrameCanvas;
 
@@ -41,13 +42,14 @@ private:
     const int _parallelDisplays;
 
     VirtualFrameCanvas *_currentFrame;
+    std::mutex          _currentFrameMutex;
 
     SDL_Window   *_window;
     SDL_Renderer *_renderer;
     bool          _runningSimulation;
     std::mutex    _runningSimulationMutex;
 
-    uint32_t *ValueAt(int x, int y);
+    Utils::Pixel *ValueAt(int x, int y) const;
 };
 
 /// This class is used for double-buffering
@@ -63,14 +65,15 @@ public:
     virtual void Clear();
     virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
 
+    Utils::Pixel *ValueAt(int x, int y) const;
+
 private:
     friend class VirtualCanvas;
 
     int _width;
     int _height;
 
-    uint32_t *ValueAt(int x, int y);
-    uint32_t *_framebuffer;
+    Utils::Pixel *_framebuffer;
 };
 
 #endif

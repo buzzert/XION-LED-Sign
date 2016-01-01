@@ -16,12 +16,13 @@ private:
     {
     public:
         SpriteAnimationFrame(MatrixFrame *frame, int delay) : frame(frame), delay(delay) {};
+        ~SpriteAnimationFrame() { if (frame) delete frame; };
         int          delay;
         MatrixFrame *frame;
     };
 
     std::vector<Magick::Image> _rawImages;
-    std::vector<SpriteAnimationFrame> _frames;
+    std::vector<std::unique_ptr<SpriteAnimationFrame>> _frames;
 };
 
 #endif

@@ -80,8 +80,9 @@ void RainbowRoad::Run()
     }
 
     int rainbowOffset = 0;
+	MatrixFrame *offscreenCanvas = nullptr;
     while (running()) {
-        MatrixFrame *frameCanvas = _matrix->CreateFrameCanvas();
+        MatrixFrame *frameCanvas = offscreenCanvas ? : _matrix->CreateFrameCanvas();
 
         int waveOffset = 0;
         for (int y = 0; y < _matrix->height(); y++) {
@@ -95,11 +96,13 @@ void RainbowRoad::Run()
             waveOffset++;
         }
 
-        _matrix->SwapOnVSync(frameCanvas);
+        offscreenCanvas = _matrix->SwapOnVSync(frameCanvas);
         rainbowOffset++;
 
         usleep(refreshRate());
     }
+
+	delete offscreenCanvas;
 }
 
 
