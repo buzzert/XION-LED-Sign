@@ -26,6 +26,11 @@ VirtualCanvas::VirtualCanvas(int rows, int chainedDisplays, int parallelDisplays
 VirtualCanvas::~VirtualCanvas()
 {
     StopSimulation();
+
+    for (size_t i = 0; i < _createdFrames.size(); ++i) {
+        delete _createdFrames[i];
+    }
+
     SDL_DestroyRenderer(_renderer);
     SDL_DestroyWindow(_window);
 
@@ -34,7 +39,9 @@ VirtualCanvas::~VirtualCanvas()
 
 VirtualFrameCanvas *VirtualCanvas::CreateFrameCanvas()
 {
-    return new VirtualFrameCanvas(width(), height());
+    VirtualFrameCanvas *canvas = new VirtualFrameCanvas(width(), height());
+    _createdFrames.push_back(canvas);
+    return canvas;
 }
 
 VirtualFrameCanvas *VirtualCanvas::SwapOnVSync(VirtualFrameCanvas *other)

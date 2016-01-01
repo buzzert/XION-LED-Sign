@@ -89,9 +89,8 @@ void RainbowRoad::Run()
     }
 
     int rainbowOffset = 0;
-	MatrixFrame *offscreenCanvas = nullptr;
     while (running()) {
-        MatrixFrame *frameCanvas = offscreenCanvas ? : _matrix->CreateFrameCanvas();
+        MatrixFrame *frameCanvas = _offscreenFrame;
 
         int waveOffset = 0;
         for (int y = 0; y < _matrix->height(); y++) {
@@ -105,13 +104,11 @@ void RainbowRoad::Run()
             waveOffset++;
         }
 
-        offscreenCanvas = _matrix->SwapOnVSync(frameCanvas);
+        _offscreenFrame = _matrix->SwapOnVSync(frameCanvas);
         rainbowOffset++;
 
         usleep(refreshRate());
     }
-
-	delete offscreenCanvas;
 }
 
 #pragma mark - DDRArrows
@@ -159,9 +156,8 @@ void DDRArrows::Run()
 
 	RotateTransformer rotateTransformer;
 
-	MatrixFrame *offscreenCanvas = nullptr;
 	while (running()) {
-		MatrixFrame *nextFrame = offscreenCanvas ? : _matrix->CreateFrameCanvas();
+		MatrixFrame *nextFrame = _offscreenFrame;
 		nextFrame->Clear();
 
 		int smallestXPos = INT_MAX;
@@ -194,7 +190,7 @@ void DDRArrows::Run()
 			}
 		}
 
-		offscreenCanvas = _matrix->SwapOnVSync(nextFrame);
+		_offscreenFrame = _matrix->SwapOnVSync(nextFrame);
 
 		if (smallestXPos > 6) {
 			_GenerateNewArrowPosition();
@@ -210,8 +206,6 @@ void DDRArrows::Run()
 	}
 
 	_arrows.clear();
-
-	delete offscreenCanvas;
 }
 
 

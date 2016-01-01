@@ -16,7 +16,6 @@ private:
     {
     public:
         SpriteAnimationFrame(MatrixFrame *frame, int delay) : frame(frame), delay(delay) {};
-        ~SpriteAnimationFrame() { if (frame) delete frame; };
         int          delay;
         MatrixFrame *frame;
     };

@@ -2,6 +2,7 @@
 
 #include "matrix-type.h"
 #include "canvas.h"
+#include "utils.h"
 #include <sys/stat.h>
 #include <iostream>
 

@@ -108,9 +108,8 @@ void TextScreen::Run()
     }
 
     int currentFrameIndex = 0;
-    MatrixFrame *offscreenFrame = nullptr;
     while (running()) {
-        MatrixFrame *nextFrame = offscreenFrame ? : _matrix->CreateFrameCanvas();
+        MatrixFrame *nextFrame = _offscreenFrame;
         nextFrame->Clear();
 
         _titleLayer->DrawLayer(nextFrame);
@@ -118,7 +117,7 @@ void TextScreen::Run()
             _subtitleLayer->DrawLayer(nextFrame);
         }
 
-        offscreenFrame = _matrix->SwapOnVSync(nextFrame);
+        _offscreenFrame = _matrix->SwapOnVSync(nextFrame);
 
         _titleLayer->position.x -= 1;
         if (abs(_titleLayer->position.x) > (_titleLayer->width() + 10)) {
@@ -132,6 +131,4 @@ void TextScreen::Run()
             usleep((unsigned int)(scrollingSpeed * 1000000));
         }
     }
-
-    delete offscreenFrame;
 }

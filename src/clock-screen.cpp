@@ -20,7 +20,9 @@ static Font& _getClockFont()
 }
 
 ClockScreen::ClockScreen(Matrix *m)
-    : TickerScreen(m) {}
+    : TickerScreen(m)
+{
+}
 
 void ClockScreen::_UpdateTimeString()
 {
@@ -41,9 +43,8 @@ void ClockScreen::Run()
     _UpdateTimeString();
     clock_t lastUpdated = clock();
 
-    MatrixFrame *offscreenFrame = nullptr;
     while (running()) {
-        MatrixFrame *nextFrame = offscreenFrame ? : _matrix->CreateFrameCanvas();
+        MatrixFrame *nextFrame = _offscreenFrame;
         nextFrame->Clear();
 
         Font &font = _getClockFont();
@@ -56,7 +57,7 @@ void ClockScreen::Run()
         if (dotPosition > nextFrame->width()) dotPosition = nextFrame->width() - 1;
         nextFrame->SetPixel(dotPosition, nextFrame->height() - 1, 0xFF, 0x00, 0x00);
 
-        offscreenFrame = _matrix->SwapOnVSync(nextFrame);
+        _offscreenFrame = _matrix->SwapOnVSync(nextFrame);
 
         if (elapsed > 1.0) {
             _UpdateTimeString();
@@ -65,6 +66,4 @@ void ClockScreen::Run()
 
         usleep(refreshRate());
     }
-
-    delete offscreenFrame;
 }

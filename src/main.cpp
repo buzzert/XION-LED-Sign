@@ -43,12 +43,6 @@ struct Command {
     command_function_t function;
 };
 
-static int run_demo(char * const argv[])
-{
-    cout << "Demo" << endl;
-    return 0;
-}
-
 static int run_test(char * const argv[])
 {
     Matrix *canvas = shared_matrix();
@@ -154,7 +148,6 @@ static int run_sequence(char * const argv[])
 }
 
 static Command commands[] = {
-    Command("demo", run_demo),
     Command("test", run_test),
     Command("image", run_image_test),
     Command("run", run_sequence),
@@ -208,6 +201,9 @@ static void run_shared_matrix()
 #ifdef USE_VIRTUAL_CANVAS
     VirtualCanvas *matrix = shared_matrix();
     matrix->StartSimulation();
+#else
+    cout << "Press <RETURN> to exit." << endl;
+    getchar();
 #endif
 }
 
@@ -218,7 +214,6 @@ static int print_usage(char *program_name)
                 "\t -c <file>   : Define panel configuration file (omit to use default), \n"
     );
     fprintf(stderr, "Commands:\n"
-                "\t demo <demo options>  : Run rpi-led-matrix demo program, \n"
                 "\t test                 : Run a simple test (shows red circle), \n"
                 "\t image                : Show the XION image test, \n"
                 "\t run                  : Start running programmed sequence, \n"

@@ -7,8 +7,8 @@ typedef VirtualCanvas      Matrix;
 typedef VirtualFrameCanvas MatrixFrame;
 #else
 #include "led-matrix.h"
-typedef RGBMatrix    Matrix;
-typedef FrameCanvas  MatrixFrame;
+typedef rgb_matrix::RGBMatrix    Matrix;
+typedef rgb_matrix::FrameCanvas  MatrixFrame;
 #endif
 
 #endif

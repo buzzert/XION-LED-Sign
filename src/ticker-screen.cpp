@@ -6,7 +6,7 @@
 TickerScreen::TickerScreen(Matrix *m)
     : rgb_matrix::ThreadedCanvasManipulator(m), _matrix(m)
 {
-
+    _offscreenFrame = m->CreateFrameCanvas();
 }
 
 TickerScreen::~TickerScreen()

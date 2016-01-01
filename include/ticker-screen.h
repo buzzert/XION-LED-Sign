@@ -27,6 +27,8 @@ protected:
     time_t _beginTime;
     int _duration = 8; // default in seconds
     Matrix *const _matrix;
+
+    MatrixFrame *_offscreenFrame;
 };
 
 #endif

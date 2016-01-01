@@ -43,6 +43,7 @@ private:
 
     VirtualFrameCanvas *_currentFrame;
     std::mutex          _currentFrameMutex;
+    std::vector<VirtualFrameCanvas *> _createdFrames;
 
     SDL_Window   *_window;
     SDL_Renderer *_renderer;
