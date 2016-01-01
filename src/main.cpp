@@ -123,13 +123,15 @@ static int run_sequence(char * const argv[])
     wifiPassword.setDuration(-1);
     screens.push_back(&wifiPassword);
 
-    SpriteAnimationScreen nyanCat(m, "nyan_cat.gif");
-    screens.push_back(&nyanCat);
+    InterstitialScreen::DDRArrows ddrArrows(m);
+    ddrArrows.setDuration(10);
+    screens.push_back(&ddrArrows);
 
     TextScreen messageScreen(m, TextScreen::LabelStyle::Default);
     messageScreen.scrollingStyle = TextScreen::ScrollingStyle::ScrollIn;
     messageScreen.titleColor = Color(0x00, 0xFF, 0x00);
     messageScreen.SetTitleLabel("Why do you need Konami original songs?");
+    messageScreen.scrollingSpeed = 0.02;
     messageScreen.setDuration(-1);
     screens.push_back(&messageScreen);
 
@@ -139,6 +141,9 @@ static int run_sequence(char * const argv[])
     ClockScreen clockScreen(m);
     clockScreen.setDuration(8);
     screens.push_back(&clockScreen);
+
+    SpriteAnimationScreen nyanCat(m, "nyan_cat.gif");
+    screens.push_back(&nyanCat);
 
     ScreenCoordinator coordinator(screens);
     coordinator.Start();

@@ -1,5 +1,12 @@
 #include "interstitial-screens.h"
 
+#include "transformer.h"
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+using namespace rgb_matrix;
+
 namespace InterstitialScreen {
 
 // From: https://www.cs.rit.edu/~ncs/color/t_convert.html
@@ -54,6 +61,8 @@ static void HSVtoRGB(float *r, float *g, float *b, float h, float s, float v)
 	}
 }
 
+#pragma mark - RainbowRoad
+
 void RainbowRoad::Run()
 {
     typedef struct {
@@ -101,6 +110,106 @@ void RainbowRoad::Run()
 
         usleep(refreshRate());
     }
+
+	delete offscreenCanvas;
+}
+
+#pragma mark - DDRArrows
+
+DDRArrows::DDRArrows(Matrix *m)
+	: TickerScreen(m)
+{
+	_blueArrowImage.read(string(RESOURCES_DIR) + "/ddr_arrow_blue.png");
+	_pinkArrowImage.read(string(RESOURCES_DIR) + "/ddr_arrow_pink.png");
+
+	srand(time(0));
+}
+
+void DDRArrows::_GenerateNewArrowPosition()
+{
+	int height = _matrix->height();
+
+	int x = -1 * _blueArrowImage.size().width();
+	int y = 0;
+	switch ((rand() % 4)) {
+		case 0:
+			y = -4;
+			break;
+		case 1:
+			y = 1;
+			break;
+		case 2:
+			y = 5;
+			break;
+		case 3:
+			y = 9;
+			break;
+	}
+
+	Arrow arrow;
+	arrow.position = Utils::Point(x, y);
+	arrow.angle = (rand() % 3) * 90;
+	arrow.color = (ArrowColor)(rand() % 2);
+	_arrows.push_back(arrow);
+}
+
+void DDRArrows::Run()
+{
+	_GenerateNewArrowPosition();
+
+	RotateTransformer rotateTransformer;
+
+	MatrixFrame *offscreenCanvas = nullptr;
+	while (running()) {
+		MatrixFrame *nextFrame = offscreenCanvas ? : _matrix->CreateFrameCanvas();
+		nextFrame->Clear();
+
+		int smallestXPos = INT_MAX;
+		vector<int> indiciesToRemove;
+		for (auto it = _arrows.begin(); it != _arrows.end(); it++) {
+			Utils::Point &point = it->position;
+			int angle = it->angle;
+			ArrowColor color = it->color;
+
+			rotateTransformer.SetAngle(angle);
+
+			Magick::Image &image = (color == ArrowColor::Blue) ? _blueArrowImage : _pinkArrowImage;
+
+			// Draw arrow
+			int dimensions = max(image.size().width(), image.size().height());
+			RasterizedFrame arrowFrame(dimensions, dimensions);
+			arrowFrame.Clear();
+			Utils::DrawImageIntoCanvas(rotateTransformer.Transform(&arrowFrame), image);
+
+			arrowFrame.DrawLayerAtPoint(nextFrame, point);
+
+			// Advance position
+			point.x += 1;
+			if (point.x > _matrix->width()) {
+				indiciesToRemove.push_back(distance(_arrows.begin(), it));
+			}
+
+			if (point.x < smallestXPos) {
+				smallestXPos = point.x;
+			}
+		}
+
+		offscreenCanvas = _matrix->SwapOnVSync(nextFrame);
+
+		if (smallestXPos > 6) {
+			_GenerateNewArrowPosition();
+
+			// Cleanup offscreen arrow positions
+			for (int i = 0; i < indiciesToRemove.size(); i++) {
+				int index = indiciesToRemove[i];
+				_arrows.erase(_arrows.begin() + index);
+			}
+		}
+
+		usleep(1000000 / 20);
+	}
+
+	_arrows.clear();
 
 	delete offscreenCanvas;
 }

@@ -69,7 +69,7 @@ void TextScreen::_RasterizeTitleLayer()
     if (!_titleLayer) {
         int width = _widthOfTextWithFont(_titleLabel, *font);
         int height = font->height();
-        _titleLayer = unique_ptr<RasterizedTypeLayer>(new RasterizedTypeLayer(width, height));
+        _titleLayer = unique_ptr<RasterizedFrame>(new RasterizedFrame(width, height));
     }
 
     _titleLayer->Clear();
@@ -87,7 +87,7 @@ void TextScreen::_RasterizeSubtitleLayer()
     if (!_subtitleLayer) {
         int width = _widthOfTextWithFont(_subtitleLabel, *font);
         int height = font->height();
-        _subtitleLayer = unique_ptr<RasterizedTypeLayer>(new RasterizedTypeLayer(width, height));
+        _subtitleLayer = unique_ptr<RasterizedFrame>(new RasterizedFrame(width, height));
     }
 
     _subtitleLayer->Clear();
@@ -134,19 +134,4 @@ void TextScreen::Run()
     }
 
     delete offscreenFrame;
-}
-
-#pragma mark - RasterizedTypeLayer
-void TextScreen::RasterizedTypeLayer::DrawLayer(Canvas *c) const
-{
-    for (int y = 0; y < height(); y++) {
-        for (int x = 0; x < width(); x++) {
-            int relX = position.x + x;
-            int relY = position.y + y;
-            if (relX >= 0 && relX < c->width() && relY >= 0 && relY < c->height()) {
-                Utils::Pixel *p = ValueAt(x, y);
-                c->SetPixel(relX, relY, p->red, p->green, p->blue);
-            }
-        }
-    }
 }

@@ -1,6 +1,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include "canvas.h"
+#include <cstdint>
+#include <Magick++.h>
+
 namespace Utils {
 
 class Pixel {
@@ -18,6 +22,24 @@ public:
     int x;
     int y;
 };
+
+static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& image)
+{
+    for (size_t y = 0; y < image.rows(); ++y) {
+        for (size_t x = 0; x < image.columns(); ++x) {
+            const Magick::Color &c = image.pixelColor(x, y);
+            if (c.alphaQuantum() == 0) {
+                if (x < m->width() && y < m->height()) {
+                    m->SetPixel(x, y,
+                                   ScaleQuantumToChar(c.redQuantum()),
+                                   ScaleQuantumToChar(c.greenQuantum()),
+                                   ScaleQuantumToChar(c.blueQuantum())
+                   );
+               }
+           }
+        }
+    }
+}
 
 } // namespace Utils
 

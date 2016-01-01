@@ -4,6 +4,7 @@
 #include <string>
 #include "ticker-screen.h"
 #include "graphics.h"
+#include "rasterized-frame.h"
 
 class TextScreen : public TickerScreen
 {
@@ -41,17 +42,8 @@ public:
 private:
     rgb_matrix::Font *_CachedFontWithName(const std::string& name);
 
-    class RasterizedTypeLayer : public VirtualFrameCanvas {
-    public:
-        RasterizedTypeLayer(int width, int height)
-            : VirtualFrameCanvas(width, height), position(0, 0) {};
-        Utils::Point position;
-
-        void DrawLayer(Canvas *c) const;
-    };
-
-    std::unique_ptr<RasterizedTypeLayer> _titleLayer;
-    std::unique_ptr<RasterizedTypeLayer> _subtitleLayer;
+    std::unique_ptr<RasterizedFrame> _titleLayer;
+    std::unique_ptr<RasterizedFrame> _subtitleLayer;
 
     std::string _titleLabel;
     std::string _subtitleLabel;

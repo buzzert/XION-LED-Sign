@@ -96,9 +96,9 @@ void VirtualCanvas::StartSimulation()
                 rectangle.x = LED_MARGIN;
             }
 
-            SDL_RenderPresent( _renderer );
+            SDL_RenderPresent(_renderer);
         }
-        
+
         usleep((1000000 / 60));
     }
 }
@@ -160,8 +160,10 @@ void VirtualFrameCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint
 {
     Utils::Pixel pixel(red, green, blue);
 
-    Utils::Pixel *val = ValueAt(x, y);
-    (*val) = pixel;
+    if ( ((y * width()) + x) < (width() * height()) ) {
+        Utils::Pixel *val = ValueAt(x, y);
+        (*val) = pixel;
+    }
 }
 
 void VirtualFrameCanvas::Clear()

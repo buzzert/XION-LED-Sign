@@ -40,16 +40,7 @@ SpriteAnimationScreen::SpriteAnimationScreen(Matrix *m, std::string animationFil
         Magick::Image image = _rawImages[i];
         MatrixFrame *frameCanvas = _matrix->CreateFrameCanvas();
 
-        for (size_t y = 0; y < image.rows(); ++y) {
-            for (size_t x = 0; x < image.columns(); ++x) {
-                const Magick::Color &c = image.pixelColor(x, y);
-                frameCanvas->SetPixel(x, y,
-                               ScaleQuantumToChar(c.redQuantum()),
-                               ScaleQuantumToChar(c.greenQuantum()),
-                               ScaleQuantumToChar(c.blueQuantum())
-               );
-            }
-        }
+        Utils::DrawImageIntoCanvas(frameCanvas, image);
 
         SpriteAnimationFrame *animFrame = new SpriteAnimationFrame(frameCanvas, image.animationDelay());
         _frames.push_back(unique_ptr<SpriteAnimationFrame>(animFrame));
