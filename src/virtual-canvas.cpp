@@ -82,7 +82,7 @@ void VirtualCanvas::StartSimulation()
 
         {
             lock_guard<mutex> guard(_currentFrameMutex);
-            
+
             for (unsigned int y = 0; y < height(); y++) {
                 for (unsigned int x = 0; x < width(); x++) {
                     Pixel colorVal = *(ValueAt(x, y));
@@ -97,8 +97,9 @@ void VirtualCanvas::StartSimulation()
             }
 
             SDL_RenderPresent( _renderer );
-            usleep((1000000 / 60));
         }
+        
+        usleep((1000000 / 60));
     }
 }
 

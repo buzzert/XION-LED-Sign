@@ -3,6 +3,7 @@
 
 #include "threaded-canvas-manipulator.h"
 #include "matrix-type.h"
+#include <unistd.h>
 
 class TickerScreen : public rgb_matrix::ThreadedCanvasManipulator
 {
