@@ -13,7 +13,7 @@ void ScreenCoordinator::Run()
     {
         TickerScreen *screen = _screens[currentScreenIdx];
         screen->Start();
-        while (screen->running()); // spin lock
+        while (screen->running()) { usleep(1000000 / 5); }; // spin lock
         screen->Stop();
         screen->WaitStopped();
 
