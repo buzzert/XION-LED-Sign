@@ -6,6 +6,7 @@
 #include <getopt.h>
 #include <iostream>
 #include <libgen.h>
+#include <cstring>
 
 #include <Magick++.h>
 
@@ -274,5 +275,5 @@ int main(int argc, char * const argv[])
         return 1;
     }
 
-    return execute_command(command_name, {});
+    return execute_command(command_name, argv);
 }

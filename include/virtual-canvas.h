@@ -3,13 +3,15 @@
 
 #include <stdint.h>
 #include <vector>
-#include "SDL2/SDL.h"
 
 #include <thread>
 #include <mutex>
 
 #include "led-matrix.h"
 #include "utils.h"
+
+#ifdef USE_VIRTUAL_CANVAS
+#include "SDL2/SDL.h"
 
 class VirtualFrameCanvas;
 
@@ -52,6 +54,8 @@ private:
 
     Utils::Pixel *ValueAt(int x, int y) const;
 };
+
+#endif
 
 /// This class is used for double-buffering
 class VirtualFrameCanvas : public rgb_matrix::Canvas {

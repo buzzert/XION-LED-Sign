@@ -2,11 +2,14 @@
 
 #include <iostream>
 #include <unistd.h>
+#include <cstring>
 
 #define LED_SIZE 6
 #define LED_MARGIN 6
 
 using namespace std;
+
+#ifdef USE_VIRTUAL_CANVAS
 
 VirtualCanvas::VirtualCanvas(int rows, int chainedDisplays, int parallelDisplays)
     : _rows(rows), _chainedDisplays(chainedDisplays), _parallelDisplays(parallelDisplays), _runningSimulation(true)
@@ -149,6 +152,8 @@ void VirtualCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
 {
     _currentFrame->Fill(red, green, blue);
 }
+
+#endif
 
 #pragma mark - VirtualFrameCanvas
 

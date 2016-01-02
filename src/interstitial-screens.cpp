@@ -3,6 +3,8 @@
 #include "transformer.h"
 #include <iostream>
 #include <algorithm>
+#include <climits>
+#include <cmath>
 
 using namespace std;
 using namespace rgb_matrix;

@@ -2,8 +2,10 @@
 DEBUG=1
 
 # Enable this to use the virtual LED sign
-DEFINES+=-D USE_VIRTUAL_CANVAS
+# DEFINES+=-D USE_VIRTUAL_CANVAS
 
+# NOTE! When compiling on Raspberry-pi, use the g++-4.7 compiler
+#       for compatibility with rpi library
 CC := clang++
 SRCDIR := src
 BUILDDIR := build
@@ -27,7 +29,11 @@ SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -std=c++11 -g $(DEFINES) # -Wall
-LIB := -lm -lstdc++ -lpthread -lSDL2
+LIB := -lm -lstdc++ -lpthread
+
+# Add this if USE_VIRTUAL_CANVAS
+# LIB+= -lSDL2
+
 INC := -I include -I$(RPI_RGB_INCDIR)
 
 # ImageMagick
