@@ -125,7 +125,7 @@ static int run_sequence(char * const argv[])
     TextScreen messageScreen(m, TextScreen::LabelStyle::Default);
     messageScreen.scrollingStyle = TextScreen::ScrollingStyle::ScrollIn;
     messageScreen.titleColor = Color(0x00, 0xFF, 0x00);
-    messageScreen.SetTitleLabel("Why do you need Konami original songs?");
+    messageScreen.SetTitleLabel("Thank You For Playing!");
     messageScreen.scrollingSpeed = 0.02;
     messageScreen.setDuration(-1);
     screens.push_back(&messageScreen);

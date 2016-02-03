@@ -5,6 +5,10 @@
 #include "matrix-type.h"
 #include <Magick++.h>
 
+#ifdef __linux__
+#include <memory>
+#endif
+
 class SpriteAnimationScreen : public TickerScreen
 {
 public:

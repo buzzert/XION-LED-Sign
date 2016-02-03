@@ -204,7 +204,7 @@ void DDRArrows::Run()
 			}
 		}
 
-		usleep(1000000 / 20);
+		usleep(1000000 / 30);
 	}
 
 	_arrows.clear();

@@ -3,6 +3,14 @@
 #include "graphics.h"
 
 #include <ctime>
+#include <time.h>
+#include <sys/time.h>
+#include <math.h>
+
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
 
 using namespace rgb_matrix;
 using namespace std;
@@ -38,11 +46,25 @@ void ClockScreen::_UpdateTimeString()
     _timeString = buffer;
 }
 
+static inline void _clock_get_monotonic_time(struct timespec *ts)
+{
+    #ifdef __MACH__
+    // For OS X
+    clock_serv_t cclock;
+    mach_timespec_t mts;
+    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+    clock_get_time(cclock, &mts);
+    mach_port_deallocate(mach_task_self(), cclock);
+    ts->tv_sec = mts.tv_sec;
+    ts->tv_nsec = mts.tv_nsec;
+    #else
+    // For Linux
+    clock_gettime(CLOCK_REALTIME, ts);
+    #endif
+}
+
 void ClockScreen::Run()
 {
-    _UpdateTimeString();
-    clock_t lastUpdated = clock();
-
     while (running()) {
         MatrixFrame *nextFrame = _offscreenFrame;
         nextFrame->Clear();
@@ -50,20 +72,21 @@ void ClockScreen::Run()
         Font &font = _getClockFont();
         DrawText(nextFrame, font, 0, font.baseline() + 2, Color(0xFF, 0x00, 0x00), _timeString.c_str());
 
-        clock_t now = clock();
-        double elapsed = double(now - lastUpdated) / CLOCKS_PER_SEC;
+        struct timespec te = { 0, 0 };
+        _clock_get_monotonic_time(&te);
 
-        int dotPosition = (int)(elapsed * (nextFrame->width() - 1));
-        if (dotPosition > nextFrame->width()) dotPosition = nextFrame->width() - 1;
-        nextFrame->SetPixel(dotPosition, nextFrame->height() - 1, 0xFF, 0x00, 0x00);
+        time_t seconds = te.tv_sec;
+        long nanoseconds = fmod(te.tv_nsec, 1e+9);
 
-        _offscreenFrame = _matrix->SwapOnVSync(nextFrame);
+        float perc = (nanoseconds / 1e+9);
+        int pos = (perc * nextFrame->width());
+        nextFrame->SetPixel(pos, nextFrame->height() - 1, 0xFF, 0x00, 0x00);
 
-        if (elapsed > 1.0) {
+        if ((seconds % 1) == 0) {
             _UpdateTimeString();
-            lastUpdated = now;
         }
 
+        _offscreenFrame = _matrix->SwapOnVSync(nextFrame);
         usleep(refreshRate());
     }
 }
