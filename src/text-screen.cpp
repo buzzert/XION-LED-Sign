@@ -8,17 +8,6 @@ using namespace std;
 
 static std::map<std::string, rgb_matrix::Font *> __cachedFonts;
 
-static int _widthOfTextWithFont(const std::string& text, const Font& font)
-{
-    int width = 0;
-    for (auto it = text.cbegin(); it != text.cend(); it++) {
-        char c = *it;
-        width += font.CharacterWidth((uint32_t)c);
-    }
-
-    return width;
-}
-
 TextScreen::TextScreen(Utils::Size canvasSize, LabelStyle labelStyle)
     : TickerScreen(canvasSize), labelStyle(labelStyle), scrollingStyle(ScrollingStyle::WaitThenScroll),
       titleColor(0xFF, 0xFF, 0xFF), subtitleColor(0xFF, 0xFF, 0xFF)
@@ -68,7 +57,7 @@ void TextScreen::_RasterizeTitleLayer()
     Font *font = _CachedFontWithName(fontName);
 
     if (!_titleLayer) {
-        int width = _widthOfTextWithFont(_titleLabel, *font);
+        int width = Utils::WidthOfTextWithFont(_titleLabel, *font);
         int height = font->height();
         _titleLayer = unique_ptr<RasterizedFrame>(new RasterizedFrame(width, height));
     }
@@ -86,7 +75,7 @@ void TextScreen::_RasterizeSubtitleLayer()
     Font *font = _CachedFontWithName("4x6.bdf");
 
     if (!_subtitleLayer) {
-        int width = _widthOfTextWithFont(_subtitleLabel, *font);
+        int width = Utils::WidthOfTextWithFont(_subtitleLabel, *font);
         int height = font->height();
         _subtitleLayer = unique_ptr<RasterizedFrame>(new RasterizedFrame(width, height));
     }

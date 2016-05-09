@@ -110,6 +110,7 @@ static int run_sequence(char * const argv[])
 
     // Warning Screen
     WarningScreen warningScreen(canvasSize);
+    warningScreen.setDuration(10.0);
     screens.push_back(&warningScreen);
 
     // XION Logo

@@ -4,6 +4,7 @@
 #include "canvas.h"
 #include <cstdint>
 #include <Magick++.h>
+#include "graphics.h"
 
 namespace Utils {
 
@@ -58,6 +59,16 @@ static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& imag
     DrawImageIntoCanvas(m, image, Point<int>(0, 0));
 }
 
+static int WidthOfTextWithFont(const std::string& text, const rgb_matrix::Font& font)
+{
+    int width = 0;
+    for (auto it = text.cbegin(); it != text.cend(); it++) {
+        char c = *it;
+        width += font.CharacterWidth((uint32_t)c);
+    }
+
+    return width;
+}
 
 
 } // namespace Utils
