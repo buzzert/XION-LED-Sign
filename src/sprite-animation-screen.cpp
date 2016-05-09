@@ -15,8 +15,8 @@ static bool _fileExists(std::string filepath)
     return ( stat(filepath.c_str(), &buffer) == 0 );
 }
 
-SpriteAnimationScreen::SpriteAnimationScreen(std::string animationFilePath)
-    : TickerScreen()
+SpriteAnimationScreen::SpriteAnimationScreen(Utils::Size size, std::string animationFilePath)
+    : TickerScreen(size)
 {
     if (!_fileExists(animationFilePath)) {
         // Try resources directory

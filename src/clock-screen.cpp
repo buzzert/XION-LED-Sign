@@ -27,8 +27,8 @@ static Font& _getClockFont()
     return __clockFont;
 }
 
-ClockScreen::ClockScreen()
-    : TickerScreen()
+ClockScreen::ClockScreen(Utils::Size size)
+    : TickerScreen(size)
 {
 }
 

@@ -8,7 +8,7 @@
 class ClockScreen : public TickerScreen
 {
 public:
-    ClockScreen();
+    ClockScreen(Utils::Size size);
 
     void Update(double timeDelta) override;
     void Draw(MatrixFrame *nextFrame) override;

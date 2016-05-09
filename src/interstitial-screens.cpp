@@ -75,7 +75,7 @@ void RainbowRoad::Start()
 		uint8_t b;
 	} pixel_t;
 
-	int width = _canvasSize.width * 2;
+	int width = canvasSize.width * 2;
 
 	_horizontalPixels = (Utils::Pixel *)malloc(sizeof(Utils::Pixel) * width);
 	for (int i = 0; i < width; i++) {
@@ -101,9 +101,9 @@ void RainbowRoad::Update(double timeDelta)
 void RainbowRoad::Draw(MatrixFrame *nextFrame)
 {
 	int waveOffset = 0;
-	for (int y = 0; y < _canvasSize.height; y++) {
-		for (int x = 0; x < _canvasSize.width; x++) {
-			int pixelIndex = abs(x - _rainbowOffset - waveOffset) % (_canvasSize.width * 2);
+	for (int y = 0; y < canvasSize.height; y++) {
+		for (int x = 0; x < canvasSize.width; x++) {
+			int pixelIndex = abs(x - _rainbowOffset - waveOffset) % (canvasSize.width * 2);
 			Utils::Pixel pixel = _horizontalPixels[pixelIndex];
 
 			nextFrame->SetPixel(x, y, pixel.red, pixel.green, pixel.blue);
@@ -116,7 +116,7 @@ void RainbowRoad::Draw(MatrixFrame *nextFrame)
 #pragma mark - DDRArrows
 
 DDRArrows::DDRArrows(Utils::Size canvasSize)
-	: canvasSize(canvasSize)
+	: TickerScreen(canvasSize)
 {
 	_blueArrowImage.read(string(RESOURCES_DIR) + "/ddr_arrow_blue.png");
 	_pinkArrowImage.read(string(RESOURCES_DIR) + "/ddr_arrow_pink.png");

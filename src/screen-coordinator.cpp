@@ -21,14 +21,14 @@ void ScreenCoordinator::Run()
     {
         TickerScreen *screen = _screens[currentScreenIdx];
 
-        screen->_ResetBeginTime();
+        screen->ResetBeginTime();
         screen->Start();
 
         while (screen->running()) {
             auto beginUpdateTime = chrono::high_resolution_clock::now();
 
             // Update
-            double timeDelta = screen->_TimeDeltaSeconds();
+            double timeDelta = screen->TimeDeltaSeconds();
             screen->Update(timeDelta);
 
             // Prepare next frame (double buffering)

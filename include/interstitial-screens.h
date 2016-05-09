@@ -10,7 +10,7 @@ namespace InterstitialScreen {
 class RainbowRoad : public TickerScreen
 {
 public:
-    RainbowRoad(Utils::Size canvasSize) : _canvasSize(canvasSize) {};
+    RainbowRoad(Utils::Size canvasSize) : TickerScreen(canvasSize) {};
 
     void Start() override;
     void Update(double timeDelta) override;
@@ -19,7 +19,6 @@ public:
 private:
     int           _rainbowOffset;
     Utils::Pixel *_horizontalPixels;
-    Utils::Size   _canvasSize;
 };
 
 class DDRArrows : public TickerScreen
@@ -31,8 +30,6 @@ public:
     void Stop() override;
     void Update(double timeDelta) override;
     void Draw(MatrixFrame *nextFrame) override;
-
-    Utils::Size canvasSize;
 
 private:
     enum ArrowColor { Blue, Pink };

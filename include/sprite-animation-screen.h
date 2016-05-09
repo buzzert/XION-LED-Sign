@@ -12,7 +12,7 @@
 class SpriteAnimationScreen : public TickerScreen
 {
 public:
-    SpriteAnimationScreen(std::string animationFilePath);
+    SpriteAnimationScreen(Utils::Size size, std::string animationFilePath);
 
     void Update(double timeDelta) override;
     void Draw(MatrixFrame *nextFrame) override;

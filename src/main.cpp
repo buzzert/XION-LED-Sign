@@ -108,8 +108,12 @@ static int run_sequence(char * const argv[])
 
     vector<TickerScreen *> screens;
 
+    // Warning Screen
+    WarningScreen warningScreen(canvasSize);
+    screens.push_back(&warningScreen);
+
     // XION Logo
-    SpriteAnimationScreen xionLogo("xion_logo_anim.gif");
+    SpriteAnimationScreen xionLogo(canvasSize, "xion_logo_anim.gif");
     screens.push_back(&xionLogo);
 
     // WiFi Password
@@ -141,12 +145,12 @@ static int run_sequence(char * const argv[])
     screens.push_back(&rainbowRoad);
 
     // Clock
-    ClockScreen clockScreen;
+    ClockScreen clockScreen(canvasSize);
     clockScreen.setDuration(8);
     screens.push_back(&clockScreen);
 
     // Nyan Cat
-    SpriteAnimationScreen nyanCat("nyan_cat.gif");
+    SpriteAnimationScreen nyanCat(canvasSize, "nyan_cat.gif");
     screens.push_back(&nyanCat);
 
     // --

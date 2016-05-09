@@ -20,7 +20,7 @@ static int _widthOfTextWithFont(const std::string& text, const Font& font)
 }
 
 TextScreen::TextScreen(Utils::Size canvasSize, LabelStyle labelStyle)
-    : canvasSize(canvasSize), labelStyle(labelStyle), scrollingStyle(ScrollingStyle::WaitThenScroll),
+    : TickerScreen(canvasSize), labelStyle(labelStyle), scrollingStyle(ScrollingStyle::WaitThenScroll),
       titleColor(0xFF, 0xFF, 0xFF), subtitleColor(0xFF, 0xFF, 0xFF)
 {
 
@@ -98,7 +98,7 @@ void TextScreen::_RasterizeSubtitleLayer()
 void TextScreen::Start()
 {
     TickerScreen::Start();
-    
+
     _RasterizeTitleLayer();
     _RasterizeSubtitleLayer();
 }

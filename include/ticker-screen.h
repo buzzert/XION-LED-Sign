@@ -8,7 +8,7 @@
 class TickerScreen
 {
 public:
-    TickerScreen();
+    TickerScreen(Utils::Size canvasSize);
     virtual ~TickerScreen();
 
     virtual void Start() { _running = true; };
@@ -26,15 +26,10 @@ public:
 
     bool running();
 
-    // temp
-    void _ResetBeginTime();
-    double _TimeDeltaSeconds() const;
+    Utils::Size canvasSize;
 
-    // temp
-    MatrixFrame *_offscreenFrame;
-    Matrix *const _matrix;
-
-    virtual void Run() {};
+    void   ResetBeginTime();
+    double TimeDeltaSeconds() const;
 
 protected:
     bool   _running = true;

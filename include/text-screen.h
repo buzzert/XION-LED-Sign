@@ -29,8 +29,6 @@ public:
     LabelStyle     labelStyle;
     ScrollingStyle scrollingStyle;
 
-    Utils::Size canvasSize;
-
     TextScreen(Utils::Size canvasSize, LabelStyle labelStyle = LabelStyle::Default);
 
     const std::string& GetTitleLabel() const { return _titleLabel; };

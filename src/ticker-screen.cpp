@@ -6,8 +6,8 @@
 
 using namespace std;
 
-TickerScreen::TickerScreen()
-    : _matrix(nullptr)
+TickerScreen::TickerScreen(Utils::Size canvasSize)
+    : canvasSize(canvasSize)
 {
 }
 
@@ -16,12 +16,12 @@ TickerScreen::~TickerScreen()
 
 }
 
-void TickerScreen::_ResetBeginTime()
+void TickerScreen::ResetBeginTime()
 {
     _beginTime = chrono::system_clock::now();
 }
 
-double TickerScreen::_TimeDeltaSeconds() const
+double TickerScreen::TimeDeltaSeconds() const
 {
     auto now = chrono::system_clock::now();
     chrono::duration<double> diff = now - _beginTime;
@@ -31,5 +31,5 @@ double TickerScreen::_TimeDeltaSeconds() const
 
 bool TickerScreen::running()
 {
-    return _running && ((duration() < 0) || (_TimeDeltaSeconds() < duration()));
+    return _running && ((duration() < 0) || (TimeDeltaSeconds() < duration()));
 }

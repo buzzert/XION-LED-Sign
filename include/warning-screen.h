@@ -7,7 +7,7 @@
 class WarningScreen : public TickerScreen
 {
 public:
-    WarningScreen();
+    WarningScreen(Utils::Size size);
 
     virtual void Update(double timeDelta) override;
     virtual void Draw(MatrixFrame *nextFrame) override;
@@ -15,6 +15,8 @@ public:
 private:
     Magick::Image _segmentImage;
     int           _segmentOffset;
+
+    void _DrawWarningBarAtPosition(MatrixFrame *frame, Utils::Point<> position) const;
 };
 
 #endif
