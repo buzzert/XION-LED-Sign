@@ -46,6 +46,7 @@ private:
     VirtualFrameCanvas *_currentFrame;
     std::mutex          _currentFrameMutex;
     std::vector<VirtualFrameCanvas *> _createdFrames;
+    std::condition_variable _frameSwapSemaphore;
 
     SDL_Window   *_window;
     SDL_Renderer *_renderer;

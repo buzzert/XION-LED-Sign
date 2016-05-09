@@ -53,6 +53,8 @@ VirtualFrameCanvas *VirtualCanvas::SwapOnVSync(VirtualFrameCanvas *other)
     VirtualFrameCanvas *previous = _currentFrame;
     _currentFrame = other;
 
+    _frameSwapSemaphore.notify_one();
+
     return previous;
 }
 
@@ -91,7 +93,8 @@ void VirtualCanvas::StartSimulation()
         rectangle.w = rectangle.h = LED_SIZE;
 
         {
-            lock_guard<mutex> guard(_currentFrameMutex);
+            unique_lock<mutex> guard(_currentFrameMutex);
+            _frameSwapSemaphore.wait(guard);
 
             for (unsigned int y = 0; y < height(); y++) {
                 for (unsigned int x = 0; x < width(); x++) {
@@ -108,8 +111,6 @@ void VirtualCanvas::StartSimulation()
 
             SDL_RenderPresent(_renderer);
         }
-
-        usleep((1000000 / 60));
     }
 }
 
