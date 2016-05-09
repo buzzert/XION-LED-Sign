@@ -12,8 +12,10 @@
 class SpriteAnimationScreen : public TickerScreen
 {
 public:
-    SpriteAnimationScreen(Matrix *m, std::string animationFilePath);
-    void Run() override;
+    SpriteAnimationScreen(std::string animationFilePath);
+
+    void Update(double timeDelta) override;
+    void Draw(MatrixFrame *nextFrame) override;
 
 private:
     class SpriteAnimationFrame
@@ -24,8 +26,11 @@ private:
         MatrixFrame *frame;
     };
 
+    int _currentFrameIndex = 0;
     std::vector<Magick::Image> _rawImages;
-    std::vector<std::unique_ptr<SpriteAnimationFrame>> _frames;
+
+    Magick::Image _GetCurrentImage() const;
+    std::vector<std::unique_ptr<SpriteAnimationScreen::SpriteAnimationFrame>> _PreloadedMatrixFrames(Matrix *m);
 };
 
 #endif

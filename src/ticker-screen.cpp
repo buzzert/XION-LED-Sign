@@ -2,11 +2,13 @@
 
 #include <time.h>
 #include <iostream>
+#include <chrono>
 
-TickerScreen::TickerScreen(Matrix *m)
-    : rgb_matrix::ThreadedCanvasManipulator(m), _matrix(m)
+using namespace std;
+
+TickerScreen::TickerScreen()
+    : _matrix(nullptr)
 {
-    _offscreenFrame = m->CreateFrameCanvas();
 }
 
 TickerScreen::~TickerScreen()
@@ -14,23 +16,20 @@ TickerScreen::~TickerScreen()
 
 }
 
-void TickerScreen::Start(int realtime_priority, uint32_t affinity_mask)
+void TickerScreen::_ResetBeginTime()
 {
-    ThreadedCanvasManipulator::Start(realtime_priority, affinity_mask);
-    time(&_beginTime);
+    _beginTime = chrono::system_clock::now();
+}
+
+double TickerScreen::_TimeDeltaSeconds() const
+{
+    auto now = chrono::system_clock::now();
+    chrono::duration<double> diff = now - _beginTime;
+
+    return diff.count();
 }
 
 bool TickerScreen::running()
 {
-    if (duration() > 0) {
-        time_t now;
-        time(&now);
-
-        double secondsElapsed = difftime(now, _beginTime);
-        if (secondsElapsed > duration()) {
-            Stop();
-        }
-    }
-
-    return ThreadedCanvasManipulator::running();
+    return _running && ((duration() < 0) || (_TimeDeltaSeconds() < duration()));
 }

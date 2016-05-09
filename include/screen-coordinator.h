@@ -4,10 +4,12 @@
 #include "thread.h"
 #include "ticker-screen.h"
 
+#include <vector>
+
 class ScreenCoordinator : public rgb_matrix::Thread
 {
 public:
-    ScreenCoordinator(std::vector<TickerScreen *> screens);
+    ScreenCoordinator(Matrix *m, std::vector<TickerScreen *> screens);
 
     virtual void Run() override;
     bool running() { return _running; }
@@ -15,6 +17,7 @@ public:
 private:
     bool _running = true;
     std::vector<TickerScreen *> _screens;
+    Matrix *const _matrix;
 };
 
 #endif

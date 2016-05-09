@@ -15,8 +15,8 @@ static bool _fileExists(std::string filepath)
     return ( stat(filepath.c_str(), &buffer) == 0 );
 }
 
-SpriteAnimationScreen::SpriteAnimationScreen(Matrix *m, std::string animationFilePath)
-    : TickerScreen(m)
+SpriteAnimationScreen::SpriteAnimationScreen(std::string animationFilePath)
+    : TickerScreen()
 {
     if (!_fileExists(animationFilePath)) {
         // Try resources directory
@@ -35,33 +35,42 @@ SpriteAnimationScreen::SpriteAnimationScreen(Matrix *m, std::string animationFil
     } else {
         _rawImages.push_back(animationFrames[0]);
     }
+}
+
+vector<unique_ptr<SpriteAnimationScreen::SpriteAnimationFrame>> SpriteAnimationScreen::_PreloadedMatrixFrames(Matrix *matrix)
+{
+    vector<unique_ptr<SpriteAnimationFrame>> preloadedFrames;
 
     // Convert image frames into canvases
     for (int i = 0; i < _rawImages.size(); i++) {
         Magick::Image image = _rawImages[i];
-        MatrixFrame *frameCanvas = _matrix->CreateFrameCanvas();
+        MatrixFrame *frameCanvas = matrix->CreateFrameCanvas();
 
         Utils::DrawImageIntoCanvas(frameCanvas, image);
 
         SpriteAnimationFrame *animFrame = new SpriteAnimationFrame(frameCanvas, image.animationDelay());
-        _frames.push_back(unique_ptr<SpriteAnimationFrame>(animFrame));
+        preloadedFrames.push_back(unique_ptr<SpriteAnimationFrame>(animFrame));
     }
+
+    return preloadedFrames;
 }
 
-void SpriteAnimationScreen::Run()
+Magick::Image SpriteAnimationScreen::_GetCurrentImage() const
 {
-    int currentFrameIndex = 0;
-    while (running()) {
-        SpriteAnimationFrame *nextFrame = _frames[currentFrameIndex].get();
+    return _rawImages[_currentFrameIndex];
+}
 
-        MatrixFrame *frame = nextFrame->frame;
-        _matrix->SwapOnVSync(frame);
+void SpriteAnimationScreen::Update(double timeDelta)
+{
+    Magick::Image currentImage = _GetCurrentImage();
 
-        currentFrameIndex = (currentFrameIndex + 1) % _frames.size();
-        usleep(nextFrame->delay * 10000);
-    }
+    double delayInSeconds = (double)(currentImage.animationDelay() / 100.0);
+    int nextFrameIndex = (int)(timeDelta / delayInSeconds) % _rawImages.size();
+    _currentFrameIndex = nextFrameIndex;
+}
 
-    MatrixFrame *blankFrame = _matrix->CreateFrameCanvas();
-    blankFrame->Clear();
-    _matrix->SwapOnVSync(blankFrame);
+void SpriteAnimationScreen::Draw(MatrixFrame *nextFrame)
+{
+    Magick::Image currentImage = _GetCurrentImage();
+    Utils::DrawImageIntoCanvas(nextFrame, currentImage);
 }

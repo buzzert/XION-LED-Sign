@@ -16,14 +16,22 @@ public:
     uint8_t blue;
 };
 
+template<typename T = int>
 class Point {
 public:
-    Point(int x, int y) : x(x), y(y) {};
-    int x;
-    int y;
+    Point(T x, T y) : x(x), y(y) {};
+    T x;
+    T y;
 };
 
-static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& image, Point origin)
+class Size {
+public:
+    Size(int width, int height) : width(width), height(height) {};
+    int width;
+    int height;
+};
+
+static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& image, Point<int> origin)
 {
     for (size_t y = 0; y < image.rows(); ++y) {
         for (size_t x = 0; x < image.columns(); ++x) {
@@ -47,7 +55,7 @@ static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& imag
 
 static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& image)
 {
-    DrawImageIntoCanvas(m, image, Point(0, 0));
+    DrawImageIntoCanvas(m, image, Point<int>(0, 0));
 }
 
 

@@ -27,8 +27,8 @@ static Font& _getClockFont()
     return __clockFont;
 }
 
-ClockScreen::ClockScreen(Matrix *m)
-    : TickerScreen(m)
+ClockScreen::ClockScreen()
+    : TickerScreen()
 {
 }
 
@@ -63,30 +63,23 @@ static inline void _clock_get_monotonic_time(struct timespec *ts)
     #endif
 }
 
-void ClockScreen::Run()
+void ClockScreen::Update(double timeDelta)
 {
-    while (running()) {
-        MatrixFrame *nextFrame = _offscreenFrame;
-        nextFrame->Clear();
+    _UpdateTimeString();
+}
 
-        Font &font = _getClockFont();
-        DrawText(nextFrame, font, 0, font.baseline() + 2, Color(0xFF, 0x00, 0x00), _timeString.c_str());
+void ClockScreen::Draw(MatrixFrame *nextFrame)
+{
+    Font &font = _getClockFont();
+    DrawText(nextFrame, font, 0, font.baseline() + 2, Color(0xFF, 0x00, 0x00), _timeString.c_str());
 
-        struct timespec te = { 0, 0 };
-        _clock_get_monotonic_time(&te);
+    struct timespec te = { 0, 0 };
+    _clock_get_monotonic_time(&te);
 
-        time_t seconds = te.tv_sec;
-        long nanoseconds = fmod(te.tv_nsec, 1e+9);
+    time_t seconds = te.tv_sec;
+    long nanoseconds = fmod(te.tv_nsec, 1e+9);
 
-        float perc = (nanoseconds / 1e+9);
-        int pos = (perc * nextFrame->width());
-        nextFrame->SetPixel(pos, nextFrame->height() - 1, 0xFF, 0x00, 0x00);
-
-        if ((seconds % 1) == 0) {
-            _UpdateTimeString();
-        }
-
-        _offscreenFrame = _matrix->SwapOnVSync(nextFrame);
-        usleep(refreshRate());
-    }
+    float perc = (nanoseconds / 1e+9);
+    int pos = (perc * nextFrame->width());
+    nextFrame->SetPixel(pos, nextFrame->height() - 1, 0xFF, 0x00, 0x00);
 }

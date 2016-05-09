@@ -7,11 +7,14 @@
 class WarningScreen : public TickerScreen
 {
 public:
-    WarningScreen(Matrix *m);
-    virtual void Run() override;
+    WarningScreen();
+
+    virtual void Update(double timeDelta) override;
+    virtual void Draw(MatrixFrame *nextFrame) override;
 
 private:
     Magick::Image _segmentImage;
+    int           _segmentOffset;
 };
 
 #endif

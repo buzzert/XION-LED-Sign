@@ -8,8 +8,10 @@
 class ClockScreen : public TickerScreen
 {
 public:
-    ClockScreen(Matrix *m);
-    virtual void Run() override;
+    ClockScreen();
+
+    void Update(double timeDelta) override;
+    void Draw(MatrixFrame *nextFrame) override;
 
 private:
     std::string _timeString;

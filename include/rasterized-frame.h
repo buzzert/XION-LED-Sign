@@ -9,10 +9,10 @@ public:
     RasterizedFrame(int width, int height)
         : VirtualFrameCanvas(width, height), position(0, 0) {};
 
-    Utils::Point position;
+    Utils::Point<> position;
 
     void DrawLayer(Canvas *c) const;
-    void DrawLayerAtPoint(Canvas *c, const Utils::Point &p) const;
+    void DrawLayerAtPoint(Canvas *c, const Utils::Point<> &p) const;
 };
 
 #endif

@@ -19,6 +19,7 @@
 #include "interstitial-screens.h"
 #include "text-screen.h"
 #include "clock-screen.h"
+#include "warning-screen.h"
 
 using namespace rgb_matrix;
 using namespace std;
@@ -103,13 +104,16 @@ static int run_text_test(char * const argv[])
 static int run_sequence(char * const argv[])
 {
     Matrix *m = shared_matrix();
+    Utils::Size canvasSize(m->width(), m->height());
 
     vector<TickerScreen *> screens;
 
-    SpriteAnimationScreen xionLogo(m, "xion_logo_anim.gif");
+    // XION Logo
+    SpriteAnimationScreen xionLogo("xion_logo_anim.gif");
     screens.push_back(&xionLogo);
 
-    TextScreen wifiPassword(m, TextScreen::LabelStyle::Subtitle);
+    // WiFi Password
+    TextScreen wifiPassword(canvasSize, TextScreen::LabelStyle::Subtitle);
     wifiPassword.scrollingStyle = TextScreen::ScrollingStyle::ScrollIn;
     wifiPassword.SetTitleLabel("w0ww0wvenus");
     wifiPassword.titleColor = Color(0xFF, 0x00, 0x00);
@@ -118,29 +122,35 @@ static int run_sequence(char * const argv[])
     wifiPassword.setDuration(-1);
     screens.push_back(&wifiPassword);
 
-    InterstitialScreen::DDRArrows ddrArrows(m);
+    // DDR Arrows
+    InterstitialScreen::DDRArrows ddrArrows(canvasSize);
     ddrArrows.setDuration(10);
     screens.push_back(&ddrArrows);
 
-    TextScreen messageScreen(m, TextScreen::LabelStyle::Default);
+    // Message Screen
+    TextScreen messageScreen(canvasSize, TextScreen::LabelStyle::Default);
     messageScreen.scrollingStyle = TextScreen::ScrollingStyle::ScrollIn;
     messageScreen.titleColor = Color(0x00, 0xFF, 0x00);
     messageScreen.SetTitleLabel("Thank You For Playing!");
-    messageScreen.scrollingSpeed = 0.02;
+    messageScreen.scrollingSpeed = 30;
     messageScreen.setDuration(-1);
     screens.push_back(&messageScreen);
 
-    InterstitialScreen::RainbowRoad rainbowRoad(m);
+    // Rainbow Road
+    InterstitialScreen::RainbowRoad rainbowRoad(canvasSize);
     screens.push_back(&rainbowRoad);
 
-    ClockScreen clockScreen(m);
+    // Clock
+    ClockScreen clockScreen;
     clockScreen.setDuration(8);
     screens.push_back(&clockScreen);
 
-    SpriteAnimationScreen nyanCat(m, "nyan_cat.gif");
+    // Nyan Cat
+    SpriteAnimationScreen nyanCat("nyan_cat.gif");
     screens.push_back(&nyanCat);
 
-    ScreenCoordinator coordinator(screens);
+    // --
+    ScreenCoordinator coordinator(m, screens);
     coordinator.Start();
 
     run_shared_matrix();

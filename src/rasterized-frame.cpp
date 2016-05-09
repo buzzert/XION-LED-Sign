@@ -1,6 +1,6 @@
 #include "rasterized-frame.h"
 
-void RasterizedFrame::DrawLayerAtPoint(Canvas *c, const Utils::Point &p) const
+void RasterizedFrame::DrawLayerAtPoint(Canvas *c, const Utils::Point<> &p) const
 {
     for (int y = 0; y < height(); y++) {
         for (int x = 0; x < width(); x++) {

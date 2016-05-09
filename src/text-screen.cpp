@@ -1,6 +1,7 @@
 #include "text-screen.h"
 
 #include <time.h>
+#include <algorithm>
 
 using namespace rgb_matrix;
 using namespace std;
@@ -18,8 +19,8 @@ static int _widthOfTextWithFont(const std::string& text, const Font& font)
     return width;
 }
 
-TextScreen::TextScreen(Matrix *m, LabelStyle labelStyle)
-    : TickerScreen(m), labelStyle(labelStyle), scrollingStyle(ScrollingStyle::WaitThenScroll),
+TextScreen::TextScreen(Utils::Size canvasSize, LabelStyle labelStyle)
+    : canvasSize(canvasSize), labelStyle(labelStyle), scrollingStyle(ScrollingStyle::WaitThenScroll),
       titleColor(0xFF, 0xFF, 0xFF), subtitleColor(0xFF, 0xFF, 0xFF)
 {
 
@@ -94,41 +95,34 @@ void TextScreen::_RasterizeSubtitleLayer()
     DrawText(_subtitleLayer.get(), *font, 0, font->baseline(), subtitleColor, _subtitleLabel.c_str());
 }
 
-void TextScreen::Run()
+void TextScreen::Start()
 {
+    TickerScreen::Start();
+    
     _RasterizeTitleLayer();
     _RasterizeSubtitleLayer();
+}
 
-    double pauseDuration = 0;
-    if (scrollingStyle == ScrollingStyle::WaitThenScroll) {
-        _titleLayer->position.x = 0;
-        pauseDuration = initialPauseDuration;
-    } else if (scrollingStyle == ScrollingStyle::ScrollIn) {
-        _titleLayer->position.x = _matrix->width() + 5;
+void TextScreen::Update(double timeDelta)
+{
+    double pauseDuration = initialPauseDuration;
+    int initialPosition = 0;
+    if (scrollingStyle == ScrollingStyle::ScrollIn) {
+        initialPosition = canvasSize.width + 5;
+        pauseDuration = 0.0;
     }
 
-    int currentFrameIndex = 0;
-    while (running()) {
-        MatrixFrame *nextFrame = _offscreenFrame;
-        nextFrame->Clear();
+    int drawOffset = std::max((int)((timeDelta - pauseDuration) * scrollingSpeed), 0);
+    _titleLayer->position.x = initialPosition - drawOffset;
+    if (abs(_titleLayer->position.x) > (_titleLayer->width() + 10)) {
+        Stop();
+    }
+}
 
-        _titleLayer->DrawLayer(nextFrame);
-        if (_subtitleLayer) {
-            _subtitleLayer->DrawLayer(nextFrame);
-        }
-
-        _offscreenFrame = _matrix->SwapOnVSync(nextFrame);
-
-        _titleLayer->position.x -= 1;
-        if (abs(_titleLayer->position.x) > (_titleLayer->width() + 10)) {
-            Stop();
-        }
-
-        if (pauseDuration > 0.0) {
-            usleep((unsigned int)(pauseDuration * 1000000));
-            pauseDuration = 0.0;
-        } else {
-            usleep((unsigned int)(scrollingSpeed * 1000000));
-        }
+void TextScreen::Draw(MatrixFrame *nextFrame)
+{
+    _titleLayer->DrawLayer(nextFrame);
+    if (_subtitleLayer) {
+        _subtitleLayer->DrawLayer(nextFrame);
     }
 }

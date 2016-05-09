@@ -20,7 +20,7 @@ public:
     };
 
     // In seconds
-    double scrollingSpeed = 0.05;
+    double scrollingSpeed = 20;
     double initialPauseDuration = 3.0;
 
     rgb_matrix::Color titleColor;
@@ -29,7 +29,9 @@ public:
     LabelStyle     labelStyle;
     ScrollingStyle scrollingStyle;
 
-    TextScreen(Matrix *m, LabelStyle labelStyle = LabelStyle::Default);
+    Utils::Size canvasSize;
+
+    TextScreen(Utils::Size canvasSize, LabelStyle labelStyle = LabelStyle::Default);
 
     const std::string& GetTitleLabel() const { return _titleLabel; };
     void SetTitleLabel(const std::string& label);
@@ -37,7 +39,9 @@ public:
     const std::string& GetSubtitleLabel() const { return _subtitleLabel; };
     void SetSubtitleLabel(const std::string& label);
 
-    virtual void Run() override;
+    virtual void Start() override;
+    virtual void Update(double timeDelta) override;
+    virtual void Draw(MatrixFrame *m) override;
 
 private:
     rgb_matrix::Font *_CachedFontWithName(const std::string& name);

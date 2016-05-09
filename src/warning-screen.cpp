@@ -3,42 +3,36 @@
 
 using namespace std;
 
-WarningScreen::WarningScreen(Matrix *m)
- : TickerScreen(m)
- {
-     _segmentImage.read(string(RESOURCES_DIR) + "/warning_bar_segment.png");
- }
+WarningScreen::WarningScreen()
+ : TickerScreen()
+{
+    _segmentImage.read(string(RESOURCES_DIR) + "/warning_bar_segment.png");
+}
 
- void WarningScreen::Run()
- {
-     int topOffset = 0;
-     int bottomOffset = 0;
 
-     while (running()) {
-         MatrixFrame *nextFrame = _offscreenFrame;
-         nextFrame->Clear();
+void WarningScreen::Update(double timeDelta)
+{
+    _segmentOffset = timeDelta * 10;
+}
 
-         size_t segmentWidth = _segmentImage.columns();
+void WarningScreen::Draw(MatrixFrame *nextFrame)
+{
+    int topOffset = _segmentOffset;
+    int bottomOffset = -1 * _segmentOffset;
 
-         // Top warning bars
-         int modOffset = topOffset % segmentWidth;
-         for (int i = modOffset - segmentWidth; i < _matrix->width();) {
-             Utils::DrawImageIntoCanvas(nextFrame, _segmentImage, Utils::Point(i, 0));
-             i += segmentWidth;
-         }
+    size_t segmentWidth = _segmentImage.columns();
 
-         // Bottom warning bars
-         modOffset = bottomOffset % segmentWidth;
-         for (int i = modOffset - segmentWidth; i < _matrix->width();) {
-             Utils::DrawImageIntoCanvas(nextFrame, _segmentImage, Utils::Point(i, _matrix->height() - _segmentImage.rows()));
-             i += segmentWidth;
-         }
+    // Top warning bars
+    int modOffset = topOffset % segmentWidth;
+    for (int i = modOffset - segmentWidth; i < _matrix->width();) {
+        Utils::DrawImageIntoCanvas(nextFrame, _segmentImage, Utils::Point<>(i, 0));
+        i += segmentWidth;
+    }
 
-         topOffset++;
-         bottomOffset--;
-
-         _offscreenFrame = _matrix->SwapOnVSync(nextFrame);
-
-         usleep(1000000 / 30);
-     }
- }
+    // Bottom warning bars
+    modOffset = bottomOffset % segmentWidth;
+    for (int i = modOffset - segmentWidth; i < _matrix->width();) {
+        Utils::DrawImageIntoCanvas(nextFrame, _segmentImage, Utils::Point<>(i, _matrix->height() - _segmentImage.rows()));
+        i += segmentWidth;
+    }
+}

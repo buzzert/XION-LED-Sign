@@ -5,30 +5,42 @@
 #include "matrix-type.h"
 #include <unistd.h>
 
-class TickerScreen : public rgb_matrix::ThreadedCanvasManipulator
+class TickerScreen
 {
 public:
-    TickerScreen(Matrix *m);
+    TickerScreen();
     virtual ~TickerScreen();
 
-    virtual void Start(int realtime_priority = 0, uint32_t affinity_mask = 0);
-    virtual void Run() = 0;
+    virtual void Start() { _running = true; };
+    virtual void Stop() { _running = false; };
 
-    virtual int duration() { return _duration; };
-    void setDuration(int seconds) { _duration = seconds; }
+    // Update actors
+    virtual void Update(double timeDelta) = 0;
+
+    // Draw into nextFrame
+    virtual void Draw(MatrixFrame *nextFrame) = 0;
+
+    virtual double duration() const { return _duration; };
+    void setDuration(double seconds) { _duration = seconds; }
         // set to a negative number to run forever.
 
     bool running();
 
-    double refreshRate() { return (1000000 / 60); };
-        // convenience. returns refresh rate in microseconds
+    // temp
+    void _ResetBeginTime();
+    double _TimeDeltaSeconds() const;
 
-protected:
-    time_t _beginTime;
-    int _duration = 8; // default in seconds
+    // temp
+    MatrixFrame *_offscreenFrame;
     Matrix *const _matrix;
 
-    MatrixFrame *_offscreenFrame;
+    virtual void Run() {};
+
+protected:
+    bool   _running = true;
+    double _duration = 8; // default in seconds
+
+    std::chrono::system_clock::time_point _beginTime;
 };
 
 #endif
