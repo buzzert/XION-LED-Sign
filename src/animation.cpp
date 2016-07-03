@@ -20,15 +20,24 @@ void Animation<Color>::ApplyDelta(double delta)
     _currentValue.g = _startValue.g + ((_endValue.g - _startValue.g) * progress);
     _currentValue.b = _startValue.b + ((_endValue.b - _startValue.b) * progress);
 
+    if (Finished()) {
+        try {
+            onCompletion(_isReversing);
+        } catch (std::bad_function_call e) {
+            // empty is ok.
+        }
 
-    if (reverses && Finished()) {
-        Color startValueTmp = _startValue;
-        _startValue = _endValue;
-        _endValue = startValueTmp;
+        if (reverses) {
+            _isReversing = !_isReversing;
 
-        _currentValue = _startValue;
+            Color startValueTmp = _startValue;
+            _startValue = _endValue;
+            _endValue = startValueTmp;
 
-        _beginTime = -1;
+            _currentValue = _startValue;
+
+            _beginTime = -1;
+        }
     }
 }
 

@@ -13,6 +13,7 @@ WarningScreen::WarningScreen(Utils::Size canvasSize)
     _segmentImage.read(string(RESOURCES_DIR) + "/warning_bar_segment.png");
 
     _textAnimation.reverses = true;
+    _textAnimation.onCompletion = [this](bool reversing) { if (!reversing) { _ToggleText(); } };
 }
 
 
@@ -20,6 +21,12 @@ void WarningScreen::Update(double timeDelta)
 {
     _segmentOffset = timeDelta * 15;
     _textAnimation.ApplyDelta(timeDelta);
+}
+
+void WarningScreen::Start()
+{
+    TickerScreen::Start();
+    _textAnimation.Reset();
 }
 
 void WarningScreen::_DrawWarningBarAtPosition(MatrixFrame *frame, Utils::Point<> position) const
@@ -33,6 +40,11 @@ void WarningScreen::_DrawWarningBarAtPosition(MatrixFrame *frame, Utils::Point<>
     }
 }
 
+void WarningScreen::_ToggleText()
+{
+    _currentWarningStringIdx = (_currentWarningStringIdx + 1) % _warningStrings.size();
+}
+
 void WarningScreen::Draw(MatrixFrame *nextFrame)
 {
     int topOffset = _segmentOffset;
@@ -44,12 +56,14 @@ void WarningScreen::Draw(MatrixFrame *nextFrame)
     Font font;
     font.LoadFont((std::string(RESOURCES_DIR) + "/fonts/" + "6x10.bdf").c_str());
 
-    char *string = "08 minutes";
-    int width = Utils::WidthOfTextWithFont(string, font);
+    string nextString = _warningStrings[_currentWarningStringIdx];
+    const char *nextStringCStr = nextString.c_str();
+
+    int width = Utils::WidthOfTextWithFont(nextStringCStr, font);
     int xPos = (canvasSize.width - width) / 2;
 
     int height = font.height();
-    DrawText(nextFrame, font, xPos, font.baseline() + _segmentImage.rows(), _textAnimation.CurrentValue(), "08 minutes");
+    DrawText(nextFrame, font, xPos, font.baseline() + _segmentImage.rows(), _textAnimation.CurrentValue(), nextStringCStr);
 
     // Bottom Bar
     _DrawWarningBarAtPosition(nextFrame, Utils::Point<>(bottomOffset, canvasSize.height - _segmentImage.rows()));
