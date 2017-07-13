@@ -12,14 +12,31 @@ ScreenCoordinator::ScreenCoordinator(Matrix *m, std::vector<TickerScreen *> scre
 
 }
 
+TickerScreen* ScreenCoordinator::_NextScreen()
+{
+    TickerScreen *nextScreen = nullptr;
+    if (_interludeScreen && !_showingInterlude) {
+        // return interlude screen
+        nextScreen = _interludeScreen;
+        
+        _showingInterlude = true;
+    } else {
+        nextScreen = _screens[_currentScreenIdx];
+        _currentScreenIdx = (_currentScreenIdx + 1) % _screens.size();
+
+        _showingInterlude = false;
+    }
+
+    return nextScreen;
+}
+
 void ScreenCoordinator::Run()
 {
     MatrixFrame *offscreenFrame = _matrix->CreateFrameCanvas();
 
-    int currentScreenIdx = 0;
     while (running())
     {
-        TickerScreen *screen = _screens[currentScreenIdx];
+        TickerScreen *screen = _NextScreen();
 
         screen->ResetBeginTime();
         screen->Start();
@@ -49,7 +66,5 @@ void ScreenCoordinator::Run()
         }
 
         screen->Stop();
-
-        currentScreenIdx = (currentScreenIdx + 1) % _screens.size();
     }
 }

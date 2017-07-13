@@ -10,6 +10,7 @@ public:
         : VirtualFrameCanvas(width, height), position(0, 0) {};
 
     Utils::Point<> position;
+    bool hidden = false;
 
     void DrawLayer(Canvas *c) const;
     void DrawLayerAtPoint(Canvas *c, const Utils::Point<> &p) const;

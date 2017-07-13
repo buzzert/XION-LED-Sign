@@ -20,6 +20,7 @@
 #include "text-screen.h"
 #include "clock-screen.h"
 #include "warning-screen.h"
+#include "schedule-manager.h"
 
 using namespace rgb_matrix;
 using namespace std;
@@ -110,9 +111,9 @@ static int run_sequence(char * const argv[])
 
     // Warning Screen
     WarningScreen warningScreen(canvasSize);
-    warningScreen.setDuration(10.0);
-    warningScreen.SetWarningStrings({ "08 minutes", "ddr curfew" });
-    screens.push_back(&warningScreen);
+    warningScreen.setDuration(-1);
+    warningScreen.SetTimeRemainingString("2 minutes");
+    warningScreen.SetWarningString(" until DDR curfew");
 
     // XION Logo
     SpriteAnimationScreen xionLogo(canvasSize, "xion_logo_anim.gif");
@@ -157,6 +158,7 @@ static int run_sequence(char * const argv[])
 
     // --
     ScreenCoordinator coordinator(m, screens);
+    coordinator.ScheduleInterludeScreen(&warningScreen);
     coordinator.Start();
 
     run_shared_matrix();

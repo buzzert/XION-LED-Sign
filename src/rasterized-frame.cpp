@@ -16,5 +16,7 @@ void RasterizedFrame::DrawLayerAtPoint(Canvas *c, const Utils::Point<> &p) const
 
 void RasterizedFrame::DrawLayer(Canvas *c) const
 {
-    DrawLayerAtPoint(c, position);
+    if (!hidden) {
+        DrawLayerAtPoint(c, position);
+    }
 }
