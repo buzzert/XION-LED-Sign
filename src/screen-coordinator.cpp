@@ -61,7 +61,11 @@ void ScreenCoordinator::Run()
             auto endUpdateTime = chrono::high_resolution_clock::now();
             auto updateTimeUs = chrono::duration_cast<chrono::microseconds>(endUpdateTime - beginUpdateTime);
 
-            useconds_t sleepDuration = HZ_30_US - updateTimeUs.count();
+            useconds_t sleepDuration = HZ_30_US;
+            if (updateTimeUs.count() < sleepDuration) {
+                sleepDuration = sleepDuration - updateTimeUs.count();
+            }
+
             usleep(sleepDuration);
         }
 

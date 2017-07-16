@@ -4,6 +4,7 @@
 #include <sstream>
 #include <locale>
 #include <iomanip>
+#include <time.h>
 
 using namespace std;
 
@@ -21,13 +22,7 @@ int ScheduleManager::MinutesUntilCurfew() const
 
 void ScheduleManager::SetCurfewTimeAsString(string timeString)
 {
-    istringstream ss;
-    ss.str(timeString);
-
-    ss >> get_time(&_curfewTime, "%H:%M:%S");
-    if (ss.fail()) {
-        throw std::runtime_error("Failed to parse curfew string");
-    }
+    strptime(timeString.c_str(), "%H:%M:%S", &_curfewTime);
 }
 
 tm ScheduleManager::GetCurfewTime() const

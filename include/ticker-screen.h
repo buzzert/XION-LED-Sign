@@ -3,7 +3,10 @@
 
 #include "threaded-canvas-manipulator.h"
 #include "matrix-type.h"
+#include "utils.h"
+
 #include <unistd.h>
+#include <chrono>
 
 class TickerScreen
 {
