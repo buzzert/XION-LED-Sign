@@ -2,16 +2,15 @@
 # DEBUG=1
 
 # Enable this to use the virtual LED sign
-# USE_VIRTUAL_CANVAS=1
+USE_VIRTUAL_CANVAS=1
 
 ifeq ($(USE_VIRTUAL_CANVAS), 1)
-DEFINES+=-D USE_VIRTUAL_CANVAS
+    DEFINES+=-D USE_VIRTUAL_CANVAS
 endif
 
 # NOTE! When compiling on Raspberry-pi, use the g++-4.7 compiler
 #       for compatibility with rpi library
-# CC := clang++
-CC := g++-4.7
+CC := clang++
 SRCDIR := src
 BUILDDIR := build
 RESOURCEDIR := resources
@@ -39,6 +38,7 @@ LIB := -lm -lstdc++ -std=c++11 -lpthread
 OS := $(shell uname)
 ifeq ($(OS),Linux)
     LIB += -lrt
+	CC := g++-4.7
 endif
 
 ifeq ($(USE_VIRTUAL_CANVAS), 1)
