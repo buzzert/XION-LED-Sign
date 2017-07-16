@@ -31,6 +31,8 @@ private:
     std::unique_ptr<RasterizedFrame> _timeLeftLayer;
     std::unique_ptr<RasterizedFrame> _descriptionLayer;
 
+    Font _textLayerFont;
+
     ScheduleManager _scheduleManager;
 
     void _RasterizeTypeLayer(std::unique_ptr<RasterizedFrame> &layer, const std::string &text, const rgb_matrix::Color &color);

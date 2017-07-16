@@ -13,6 +13,7 @@ WarningScreen::WarningScreen(Utils::Size canvasSize)
     _segmentImage.read(string(RESOURCES_DIR) + "/warning_bar_segment.png");
 
     _scheduleManager.SetCurfewTimeAsString("22:00:00");
+    _textLayerFont.LoadFont((std::string(RESOURCES_DIR) + "/fonts/" + "6x10.bdf").c_str());
 }
 
 
@@ -94,22 +95,19 @@ void WarningScreen::_DrawWarningBarAtPosition(MatrixFrame *frame, Utils::Point<>
 
 void WarningScreen::_RasterizeTypeLayer(unique_ptr<RasterizedFrame> &layer, const string &text, const Color &color)
 {
-    Font font;
-    font.LoadFont((std::string(RESOURCES_DIR) + "/fonts/" + "6x10.bdf").c_str());
-
     const char *textCString = text.c_str();
 
-    int width = Utils::WidthOfTextWithFont(textCString, font);
-    int height = font.height();
+    int width = Utils::WidthOfTextWithFont(textCString, _textLayerFont);
+    int height = _textLayerFont.height();
     if (!layer.get()) {
-        int width = Utils::WidthOfTextWithFont(text, font);
+        int width = Utils::WidthOfTextWithFont(text, _textLayerFont);
         auto newLayer = unique_ptr<RasterizedFrame>(new RasterizedFrame(width, height));
         layer.swap(newLayer);
     }
 
     layer->Clear();
 
-    DrawText(layer.get(), font, 0, font.baseline(), color, textCString);
+    DrawText(layer.get(), _textLayerFont, 0, _textLayerFont.baseline(), color, textCString);
 }
 
 void WarningScreen::Draw(MatrixFrame *nextFrame)
