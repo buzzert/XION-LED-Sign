@@ -55,6 +55,24 @@ double WarningScreen::duration() const
     }
 }
 
+void WarningScreen::SetTimeRemainingString(const std::string string)
+{
+    if (_timeRemainingString != string) {
+        _timeRemainingString = string;
+
+        _RasterizeTypeLayer(_timeLeftLayer, _timeRemainingString, Color(0xFF, 0x00, 0x00));
+    }
+}
+
+void WarningScreen::SetWarningString(const std::string string)
+{
+    if (_warningString != string) {
+        _warningString = string;
+
+        _RasterizeTypeLayer(_descriptionLayer, _warningString, Color(0xFF, 0x00, 0xFF));
+    }
+}
+
 void WarningScreen::Start()
 {
     TickerScreen::Start();
@@ -77,9 +95,6 @@ void WarningScreen::Start()
         SetTimeRemainingString("DDR CURFEW ");
         SetWarningString(" out of respect for our neighbors, please stop all dance gaming after 10pm.");
     }
-
-    _RasterizeTypeLayer(_timeLeftLayer, _timeRemainingString, Color(0xFF, 0x00, 0x00));
-    _RasterizeTypeLayer(_descriptionLayer, _warningString, Color(0xFF, 0x00, 0xFF));
 }
 
 void WarningScreen::_DrawWarningBarAtPosition(MatrixFrame *frame, Utils::Point<> position) const
@@ -97,10 +112,9 @@ void WarningScreen::_RasterizeTypeLayer(unique_ptr<RasterizedFrame> &layer, cons
 {
     const char *textCString = text.c_str();
 
-    int width = Utils::WidthOfTextWithFont(textCString, _textLayerFont);
+    int width = Utils::WidthOfTextWithFont(text, _textLayerFont);
     int height = _textLayerFont.height();
-    if (!layer.get()) {
-        int width = Utils::WidthOfTextWithFont(text, _textLayerFont);
+    if (!layer.get() || layer->width() != width) {
         auto newLayer = unique_ptr<RasterizedFrame>(new RasterizedFrame(width, height));
         layer.swap(newLayer);
     }

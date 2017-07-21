@@ -12,8 +12,8 @@ class WarningScreen : public TickerScreen
 public:
     WarningScreen(Utils::Size size);
 
-    void SetTimeRemainingString(const std::string string) { _timeRemainingString = string; };
-    void SetWarningString(const std::string string) { _warningString = string; };
+    void SetTimeRemainingString(const std::string string);
+    void SetWarningString(const std::string string);
 
     virtual void Start() override;
     virtual void Update(double timeDelta) override;

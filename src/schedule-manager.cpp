@@ -16,8 +16,7 @@ int ScheduleManager::MinutesUntilCurfew() const
     int hours = _curfewTime.tm_hour - now->tm_hour;
     int mins = _curfewTime.tm_min - now->tm_min;
 
-    // return (60 * hours) + mins;
-    return 1;
+    return (60 * hours) + mins;
 }
 
 void ScheduleManager::SetCurfewTimeAsString(string timeString)
