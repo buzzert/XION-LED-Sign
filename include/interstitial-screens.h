@@ -18,7 +18,7 @@ public:
 
 private:
     int           _rainbowOffset;
-    Utils::Pixel *_horizontalPixels;
+    Utils::Pixel *_horizontalPixels = nullptr;
 };
 
 class DDRArrows : public TickerScreen

@@ -6,6 +6,8 @@
 #include <climits>
 #include <cmath>
 
+#define RAINBOW_ROAD_WIDTH_RATIO 1.3
+
 using namespace std;
 using namespace rgb_matrix;
 
@@ -75,9 +77,12 @@ void RainbowRoad::Start()
 		uint8_t b;
 	} pixel_t;
 
-	int width = canvasSize.width * 2;
+	int width = canvasSize.width * RAINBOW_ROAD_WIDTH_RATIO;
 
-	_horizontalPixels = (Utils::Pixel *)malloc(sizeof(Utils::Pixel) * width);
+	if (!_horizontalPixels) {
+		_horizontalPixels = (Utils::Pixel *)malloc(sizeof(Utils::Pixel) * width);
+	}
+
 	for (int i = 0; i < width; i++) {
 		float hue = ((float)i / (float)width) * 360;
 		float sat = 1;
@@ -103,7 +108,7 @@ void RainbowRoad::Draw(MatrixFrame *nextFrame)
 	int waveOffset = 0;
 	for (int y = 0; y < canvasSize.height; y++) {
 		for (int x = 0; x < canvasSize.width; x++) {
-			int pixelIndex = abs(x - _rainbowOffset - waveOffset) % (canvasSize.width * 2);
+			int pixelIndex = abs(x - _rainbowOffset - waveOffset) % (int)(canvasSize.width * RAINBOW_ROAD_WIDTH_RATIO);
 			Utils::Pixel pixel = _horizontalPixels[pixelIndex];
 
 			nextFrame->SetPixel(x, y, pixel.red, pixel.green, pixel.blue);
