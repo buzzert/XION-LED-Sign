@@ -7,6 +7,7 @@
 #include <iostream>
 #include <libgen.h>
 #include <cstring>
+#include <execinfo.h> // for backtrace
 
 #include <Magick++.h>
 
@@ -178,6 +179,21 @@ static Command commands[] = {
 static void sigint_handler(int sig)
 {
     exit(0);
+}
+
+static void sigsegv_handler(int sig)
+{
+    // To help resolve crashes in the field
+    static const size_t backtrace_window_size = 20;
+    size_t backtrace_size;
+    void *backtrace_array[backtrace_window_size];
+
+    backtrace_size = backtrace(backtrace_array, backtrace_window_size);
+    fprintf(stderr, "*** CRASH (received signal %d)\n", sig);
+
+    backtrace_symbols_fd(backtrace_array, backtrace_size, STDERR_FILENO);
+
+    exit(sig);
 }
 
 static void setup_sighandler()

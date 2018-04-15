@@ -38,7 +38,7 @@ LIB := -lm -lstdc++ -std=c++11 -lpthread
 OS := $(shell uname)
 ifeq ($(OS),Linux)
     LIB += -lrt
-	CC := g++-4.7
+	CC := g++
 endif
 
 ifeq ($(USE_VIRTUAL_CANVAS), 1)
