@@ -1,6 +1,7 @@
 #ifndef VIRTUAL_CANVAS_H
 #define VIRTUAL_CANVAS_H
 
+#include <condition_variable>
 #include <stdint.h>
 #include <vector>
 

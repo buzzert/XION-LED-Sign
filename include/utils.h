@@ -44,9 +44,9 @@ static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& imag
                 if (destX >= 0 && destX < m->width() &&
                     destY >= 0 && destY < m->height()) {
                     m->SetPixel(destX, destY,
-                                   ScaleQuantumToChar(c.redQuantum()),
-                                   ScaleQuantumToChar(c.greenQuantum()),
-                                   ScaleQuantumToChar(c.blueQuantum())
+                                   MagickCore::ScaleQuantumToChar(c.redQuantum()),
+                                   MagickCore::ScaleQuantumToChar(c.greenQuantum()),
+                                   MagickCore::ScaleQuantumToChar(c.blueQuantum())
                    );
                }
            }

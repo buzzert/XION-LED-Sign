@@ -48,16 +48,16 @@ endif
 INC := -I include -I$(RPI_RGB_INCDIR)
 
 # ImageMagick
-MAGICK_CXXFLAGS=`GraphicsMagick++-config --cppflags --cxxflags`
-MAGICK_LDFLAGS=`GraphicsMagick++-config --ldflags --libs`
+CFLAGS+=`pkg-config --cflags Magick++`
+LDFLAGS+=`pkg-config --libs Magick++`
 
 $(TARGET): $(OBJECTS) $(RPI_RGB_LIBRARY) $(TARGET_RESOURCES)
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $(OBJECTS) $(RPI_RGB_LIBRARY) -o $(TARGET) $(LIB) $(MAGICK_LDFLAGS)
+	@echo " $(CC) $^ -o $(TARGET) $(LDFLAGS) $(LIB)"; $(CC) $(OBJECTS) $(RPI_RGB_LIBRARY) $(LDFLAGS) -o $(TARGET) $(LIB)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) $(MAGICK_CXXFLAGS) -c -o $@ $<
+	@echo "$(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 $(RPI_RGB_LIBRARY): FORCE
 	$(MAKE) -C $(RPI_RGB_LIBDIR)
