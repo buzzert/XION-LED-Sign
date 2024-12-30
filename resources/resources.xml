@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/net/buzzert/xionled">
+    <file>resources/warning_bar_segment.png</file>
+    <file>resources/ddr_arrow_blue.png</file>
+    <file>resources/ddr_arrow_pink.png</file>
+    <file>resources/xion_logo_anim.gif</file>
+    <file>resources/xion_logo_still.png</file>
+    <file>resources/nyan_cat.gif</file>
+  </gresource>
+</gresources> 

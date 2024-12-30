@@ -10,7 +10,7 @@ using namespace rgb_matrix;
 WarningScreen::WarningScreen(Utils::Size canvasSize)
  : TickerScreen(canvasSize)
 {
-    _segmentImage.read(string(RESOURCES_DIR) + "/warning_bar_segment.png");
+    _segmentImage.read(Utils::resource_blob("warning_bar_segment.png"));
 
     _scheduleManager.SetCurfewTimeAsString("22:00:00");
     _textLayerFont.LoadFont((std::string(RESOURCES_DIR) + "/fonts/" + "6x10.bdf").c_str());

@@ -123,8 +123,8 @@ void RainbowRoad::Draw(MatrixFrame *nextFrame)
 DDRArrows::DDRArrows(Utils::Size canvasSize)
 	: TickerScreen(canvasSize)
 {
-	_blueArrowImage.read(string(RESOURCES_DIR) + "/ddr_arrow_blue.png");
-	_pinkArrowImage.read(string(RESOURCES_DIR) + "/ddr_arrow_pink.png");
+	_blueArrowImage.read(Utils::resource_blob("ddr_arrow_blue.png"));
+	_pinkArrowImage.read(Utils::resource_blob("ddr_arrow_pink.png"));
 
 	srand(time(0));
 }

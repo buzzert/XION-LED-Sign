@@ -22,6 +22,7 @@
 #include "clock-screen.h"
 #include "warning-screen.h"
 #include "schedule-manager.h"
+#include "resources.h"
 
 using namespace rgb_matrix;
 using namespace std;
@@ -159,7 +160,7 @@ static int run_sequence(char * const argv[])
 
     // --
     ScreenCoordinator coordinator(m, screens);
-    coordinator.ScheduleInterludeScreen(&warningScreen);
+    // coordinator.ScheduleInterludeScreen(&warningScreen);
     coordinator.Start();
 
     run_shared_matrix();
