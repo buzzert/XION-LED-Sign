@@ -1,3 +1,5 @@
+MAKEFLAGS += -j
+
 # Debugging
 # DEBUG=1
 
@@ -32,7 +34,8 @@ LDFLAGS+=-L$(RPI_RGB_LIBDIR) -l$(RPI_RGB_LIBRARY_NAME) -lrt -lm -lpthread
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 -g $(DEFINES) # -Wall
+DEPS := $(OBJECTS:.o=.d)
+CFLAGS := -std=c++11 -g $(DEFINES) -MMD # -Wall
 LIB := -lm -lstdc++ -std=c++11 -lpthread
 
 OS := $(shell uname)
@@ -70,6 +73,7 @@ $(TARGET_RESOURCES): FORCE
 	@mkdir -p $(TARGET_RESOURCES)/fonts
 	@cp -f $(RPI_RGB_DIR)/fonts/* $(TARGET_RESOURCES)/fonts
 
+-include $(DEPS)
 
 clean:
 	@echo " Cleaning...";
