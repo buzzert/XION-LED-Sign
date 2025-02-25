@@ -5,9 +5,6 @@
 #include <cstdint>
 #include <Magick++.h>
 #include "graphics.h"
-#include <giomm.h>
-#include "resources.h"
-#include <vector>
 
 namespace Utils {
 
@@ -75,32 +72,6 @@ static int WidthOfTextWithFont(const std::string& text, const rgb_matrix::Font& 
     return width;
 }
 
-inline std::string get_resource_path(const std::string& resource_name) {
-    return "/net/buzzert/xionled/resources/" + resource_name;
-}
-
-inline Magick::Blob resource_blob(const std::string& resource_name) {
-    const std::string normalized_path = get_resource_path(resource_name);
-
-    try {
-        auto global_resources = Glib::wrap(resources_get_resource(), true);
-        auto resource = global_resources->lookup_data(normalized_path);
-        if (!resource) {
-            throw std::runtime_error("Resource not found: " + resource_name);
-        }
-
-        gsize size = resource->get_size();
-        gconstpointer data = resource->get_data(size);
-
-        if (!data || size == 0) {
-            throw std::runtime_error("Resource is empty: " + resource_name);
-        }
-
-        return Magick::Blob(data, size);
-    } catch (const Glib::Error& e) {
-        throw std::runtime_error("Failed to load resource: " + e.what());
-    }
-}
 
 // From: https://www.cs.rit.edu/~ncs/color/t_convert.html
 inline void HSVtoRGB(float *r, float *g, float *b, float h, float s, float v)

@@ -18,9 +18,17 @@ static bool _fileExists(std::string filepath)
 SpriteAnimationScreen::SpriteAnimationScreen(Utils::Size size, std::string animationFilePath)
     : TickerScreen(size)
 {
+    if (!_fileExists(animationFilePath)) {
+        // Try resources directory
+        std::string resourcesPath = std::string(RESOURCES_DIR) + animationFilePath;
+        if (_fileExists(resourcesPath)) {
+            animationFilePath = resourcesPath;
+        }
+    }
+
     // Load image frames
     std::vector<Magick::Image> animationFrames;
-    readImages(&animationFrames, Utils::resource_blob(animationFilePath));
+    readImages(&animationFrames, animationFilePath);
 
     if (animationFrames.size() > 1) {
         Magick::coalesceImages(&_rawImages, animationFrames.begin(), animationFrames.end());

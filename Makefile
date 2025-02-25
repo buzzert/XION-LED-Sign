@@ -33,7 +33,8 @@ LDFLAGS+=-L$(RPI_RGB_LIBDIR) -l$(RPI_RGB_LIBRARY_NAME) -lrt -lm -lpthread
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o)) $(BUILDDIR)/resources.o
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+DEPS := $(OBJECTS:.o=.d)
 CFLAGS := -std=c++11 -g $(DEFINES) -MMD # -Wall
 LIB := -lm -lstdc++ -std=c++11 -lpthread
 
@@ -52,18 +53,18 @@ ifeq ($(USE_VIRTUAL_CANVAS), 1)
 LIB+= -lSDL2
 endif
 
-INC := -I include -I$(RPI_RGB_INCDIR) -I $(BUILDDIR)
+INC := -I include -I$(RPI_RGB_INCDIR)
 
 # ImageMagick
-CFLAGS+=`pkg-config --cflags Magick++ giomm-2.4`
-LDFLAGS+=`pkg-config --libs Magick++ giomm-2.4`
+CFLAGS+=`pkg-config --cflags Magick++`
+LDFLAGS+=`pkg-config --libs Magick++`
 
 $(TARGET): $(OBJECTS) $(RPI_RGB_LIBRARY) $(TARGET_RESOURCES)
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET) $(LDFLAGS) $(LIB)"; $(CC) $(OBJECTS) $(RPI_RGB_LIBRARY) $(LDFLAGS) -o $(TARGET) $(LIB)
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(BUILDDIR)/resources.c $(BUILDDIR)/resources.h 
-	@mkdir -p $(@D)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(BUILDDIR)
 	@echo "$(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 $(RPI_RGB_LIBRARY): FORCE
@@ -77,13 +78,7 @@ $(TARGET_RESOURCES): FORCE
 	@mkdir -p $(TARGET_RESOURCES)/fonts
 	@cp -f $(RPI_RGB_DIR)/fonts/* $(TARGET_RESOURCES)/fonts
 
-$(BUILDDIR)/resources.c: resources/resources.xml
-	@mkdir -p $(BUILDDIR)
-	glib-compile-resources --target=$@ --generate-source $<
-
-$(BUILDDIR)/resources.h: resources/resources.xml
-	@mkdir -p $(BUILDDIR)
-	glib-compile-resources --target=$@ --generate-header $<
+-include $(DEPS)
 
 clean:
 	@echo " Cleaning...";
