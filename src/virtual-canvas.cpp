@@ -154,6 +154,11 @@ void VirtualCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
     _currentFrame->Fill(red, green, blue);
 }
 
+void VirtualCanvas::FillAlpha(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+{
+    _currentFrame->FillAlpha(red, green, blue, alpha);
+}
+
 #endif
 
 #pragma mark - VirtualFrameCanvas
@@ -171,7 +176,7 @@ VirtualFrameCanvas::~VirtualFrameCanvas()
 
 void VirtualFrameCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue)
 {
-    Utils::Pixel pixel(red, green, blue);
+    Utils::Pixel pixel(red, green, blue, 255); // Default to fully opaque
 
     if ( ((y * width()) + x) < (width() * height()) ) {
         Utils::Pixel *val = ValueAt(x, y);
@@ -181,12 +186,22 @@ void VirtualFrameCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint
 
 void VirtualFrameCanvas::Clear()
 {
-    memset(_framebuffer, 0, sizeof(Utils::Pixel) * (height() * width()));
+    // Initialize to transparent black
+    for (int i = 0; i < height() * width(); i++) {
+        _framebuffer[i] = Utils::Pixel(0, 0, 0, 0);
+    }
 }
 
 void VirtualFrameCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue)
 {
+    this->FillAlpha(red, green, blue, 255);
+}
 
+void VirtualFrameCanvas::FillAlpha(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+{
+    for (int i = 0; i < height() * width(); i++) {
+        _framebuffer[i] = Utils::Pixel(red, green, blue, alpha);
+    }
 }
 
 Utils::Pixel *VirtualFrameCanvas::ValueAt(int x, int y) const

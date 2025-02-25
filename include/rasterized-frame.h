@@ -11,6 +11,7 @@ public:
 
     Utils::Point<> position;
     bool hidden = false;
+    float opacity = 1.0;
 
     void DrawLayer(Canvas *c) const;
     void DrawLayerAtPoint(Canvas *c, const Utils::Point<> &p) const;

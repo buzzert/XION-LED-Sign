@@ -37,6 +37,8 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o)) $(BUIL
 CFLAGS := -std=c++11 -g $(DEFINES) -MMD # -Wall
 LIB := -lm -lstdc++ -std=c++11 -lpthread
 
+all: $(TARGET)
+
 DEPS := $(OBJECTS:.o=.d)
 -include $(DEPS)
 
@@ -61,7 +63,7 @@ $(TARGET): $(OBJECTS) $(RPI_RGB_LIBRARY) $(TARGET_RESOURCES)
 	@echo " $(CC) $^ -o $(TARGET) $(LDFLAGS) $(LIB)"; $(CC) $(OBJECTS) $(RPI_RGB_LIBRARY) $(LDFLAGS) -o $(TARGET) $(LIB)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT) $(BUILDDIR)/resources.c $(BUILDDIR)/resources.h 
-	@mkdir -p $(BUILDDIR)
+	@mkdir -p $(@D)
 	@echo "$(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 $(RPI_RGB_LIBRARY): FORCE

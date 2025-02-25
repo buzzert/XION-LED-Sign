@@ -22,6 +22,8 @@
 #include "clock-screen.h"
 #include "warning-screen.h"
 #include "schedule-manager.h"
+#include "xaibatsu.h"
+
 #include "resources.h"
 
 using namespace rgb_matrix;
@@ -110,6 +112,11 @@ static int run_sequence(char * const argv[])
     Utils::Size canvasSize(m->width(), m->height());
 
     vector<TickerScreen *> screens;
+
+    // Xaibatsu
+    Xaibatsu xaibatsu(canvasSize);
+    xaibatsu.setDuration(-1);
+    screens.push_back(&xaibatsu);
 
     // Warning Screen
     WarningScreen warningScreen(canvasSize);

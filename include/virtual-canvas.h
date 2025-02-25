@@ -28,7 +28,8 @@ public:
     virtual void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
     virtual void Clear();
     virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
-
+    virtual void FillAlpha(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+    
     VirtualFrameCanvas *CreateFrameCanvas();
     VirtualFrameCanvas *SwapOnVSync(VirtualFrameCanvas *other);
 
@@ -71,6 +72,7 @@ public:
     virtual void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
     virtual void Clear();
     virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
+    virtual void FillAlpha(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 
     Utils::Pixel *ValueAt(int x, int y) const;
 
