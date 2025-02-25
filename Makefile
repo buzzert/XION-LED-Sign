@@ -4,7 +4,7 @@ MAKEFLAGS += -j
 # DEBUG=1
 
 # Enable this to use the virtual LED sign
-USE_VIRTUAL_CANVAS=1
+USE_VIRTUAL_CANVAS=0
 
 ifeq ($(USE_VIRTUAL_CANVAS), 1)
     DEFINES+=-D USE_VIRTUAL_CANVAS
@@ -34,7 +34,6 @@ LDFLAGS+=-L$(RPI_RGB_LIBDIR) -l$(RPI_RGB_LIBRARY_NAME) -lrt -lm -lpthread
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-DEPS := $(OBJECTS:.o=.d)
 CFLAGS := -std=c++11 -g $(DEFINES) -MMD # -Wall
 LIB := -lm -lstdc++ -std=c++11 -lpthread
 
@@ -46,7 +45,7 @@ DEPS := $(OBJECTS:.o=.d)
 OS := $(shell uname)
 ifeq ($(OS),Linux)
     LIB += -lrt
-	CC := g++
+	CC := g++-4.7
 endif
 
 ifeq ($(USE_VIRTUAL_CANVAS), 1)

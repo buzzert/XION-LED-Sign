@@ -67,11 +67,11 @@ static int run_image_test(char * const argv[])
     for (size_t y = 0; y < image.rows(); ++y) {
         for (size_t x = 0; x < image.columns(); ++x) {
             const Magick::Color &c = image.pixelColor(x, y);
-            sharedCanvas->SetPixel(x, y,
-                           MagickCore::ScaleQuantumToChar(c.quantumRed()),
-                           MagickCore::ScaleQuantumToChar(c.quantumGreen()),
-                           MagickCore::ScaleQuantumToChar(c.quantumBlue())
-           );
+            // sharedCanvas->SetPixel(x, y,
+            //                MagickCore::ScaleQuantumToChar(c.quantumRed()),
+            //                MagickCore::ScaleQuantumToChar(c.quantumGreen()),
+            //                MagickCore::ScaleQuantumToChar(c.quantumBlue())
+           // );
         }
     }
 

@@ -6,6 +6,12 @@
 #include <Magick++.h>
 #include "graphics.h"
 
+#ifndef MAX_MIN_H
+#define MAX_MIN_H
+#define MAX(a,b) (((a) > (b)) ? (a) : (b))
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+
 namespace Utils {
 
 class Pixel {
@@ -39,16 +45,16 @@ static void DrawImageIntoCanvas(rgb_matrix::Canvas *m, const Magick::Image& imag
     for (size_t y = 0; y < image.rows(); ++y) {
         for (size_t x = 0; x < image.columns(); ++x) {
             const Magick::Color &c = image.pixelColor(x, y);
-            if (c.quantumAlpha() > 0) {
+            if (c.alphaQuantum() > 0) {
                 int destX = origin.x + x;
                 int destY = origin.y + y;
 
                 if (destX >= 0 && destX < m->width() &&
                     destY >= 0 && destY < m->height()) {
                     m->SetPixel(destX, destY,
-                                   MagickCore::ScaleQuantumToChar(c.quantumRed()),
-                                   MagickCore::ScaleQuantumToChar(c.quantumGreen()),
-                                   MagickCore::ScaleQuantumToChar(c.quantumBlue())
+                                   MagickCore::ScaleQuantumToChar(c.redQuantum()),
+                                   MagickCore::ScaleQuantumToChar(c.greenQuantum()),
+                                   MagickCore::ScaleQuantumToChar(c.blueQuantum())
                    );
                }
            }

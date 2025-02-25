@@ -6,7 +6,7 @@
 #include "utils.h"
 
 #include <unistd.h>
-#include <chrono>
+#include <time.h>
 
 class TickerScreen
 {
@@ -38,7 +38,7 @@ protected:
     bool   _running = true;
     double _duration = 8; // default in seconds
 
-    std::chrono::system_clock::time_point _beginTime;
+    struct timespec _beginTime;
 };
 
 #endif

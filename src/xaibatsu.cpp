@@ -1,6 +1,5 @@
 #include "xaibatsu.h"
 #include "graphics.h"
-#include "resources.h"
 #include "rasterized-frame.h"
 
 #include <iostream>
